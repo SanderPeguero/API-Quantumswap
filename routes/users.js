@@ -5,7 +5,7 @@ const router = express.Router()
 
 router.post('/login', (req, res) => {res.json({Respuesta: "Sander debe implementar una funcion aqui!"})})
 
-// router.get('/', List)
+router.get('/', List)
 router.get('/:id', Search)
 router.put('/', Create)
 router.delete('/:id', Delete)
