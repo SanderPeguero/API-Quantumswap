@@ -56,7 +56,7 @@ export function Create(req, res){
 export function List(req,res){
 
     // Conexion.connect()
-    ConnectionRestart()
+    // ConnectionRestart()
 
     Conexion.query(SqlQuery, (err, result) => {
         
@@ -75,11 +75,11 @@ export function List(req,res){
 
             }
 
-            res.json({ Data: data, MensajeError: err })
+            return res.json({ Data: data, MensajeError: err })
         }
     })
 
-    Conexion.end()
+    // Conexion.end()
 
 }
 
