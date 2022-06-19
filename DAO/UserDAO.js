@@ -57,7 +57,7 @@ export function List(req,res){
 
     Conexion.connect()
 
-    Conexion.query(SqlQuery, () => {
+    Conexion.query(SqlQuery, (err, result) => {
         
         if(err || result.length == 0){
 
