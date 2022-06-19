@@ -29,17 +29,25 @@ function getInstancia(fila) {
 
 //guardar datos
 export const guardar = async (req, res) => {
+
     const ProductoModel = req.body
+
     if (ProductoModel.IDProducto == 0) {
+        
         insertar(ProductoModel, res)
+
     } else {
+        
         modificar(ProductoModel, res)
+
     }
+
 }
 
 //Crear un registro
-async function insertar(productoModel, res) {
-	const values = [
+function insertar(productoModel, res) {
+	
+    const values = [
         productoModel.Descripcion,
         productoModel.CantidadRestante,
         productoModel.Costo,
@@ -50,15 +58,23 @@ async function insertar(productoModel, res) {
         productoModel.FechaModificacion,
         productoModel.Estatus
     ]
-    await Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
+
+    Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
+        
         (err, result) => {
+
             res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+
         }
+
     )
+
+    Conexion.end()
 }
 
 //Actualizar un registro
-async function modificar(productoModel, res) {
+function modificar(productoModel, res) {
+
 	const values = [
         productoModel.Descripcion,
         productoModel.CantidadRestante,
@@ -71,52 +87,91 @@ async function modificar(productoModel, res) {
         productoModel.Estatus,
         productoModel.IDProducto
     ]
-    await Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
+    
+    Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
+    
         (err, result) => {
+        
             res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+
         }
+
     )
+
 }
 
 //Mostrar todos los registros
 export const listar = (req, res) => {
+
     Conexion.query(SqlQuery, (err, result) => {
+
         if (err || result.length == 0) {
+        
             res.json({ Data: null, MensajeError: err })
+
         } else {
+            
             let data = new Array()
+            
             for (let i = 0; i < result.length; i++) {
+            
                 let fila = result[i];
                 data.push(Object.assign({}, getInstancia(fila)))
+            
             }
+            
             res.json({ Data: data, MensajeError: err })
         }
+
     })
+
+    Conexion.end()
+
 }
 
 //Mostrar un registro
 export const buscar = async (req, res) => {
+
     const { id } = req.params
 	const values = [id]
-    await Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
+    
+    Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
+
         if (err || result.length == 0) {
+        
             res.json({ Data: null, MensajeError: err })
+        
         } else {
+        
             let data = getInstancia(result[0])
             res.json({ Data: data, MensajeError: err })
+        
         }
+    
     })
+
+    Conexion.end()
+
 }
 
 //Eliminar un registro
 export const eliminar = async (req, res) => {
+
     const ProductoModel = req.params
 	const values = [ProductoModel.IDProducto]
-    await Conexion.query("DELETE FROM productos WHERE IDProducto=? ", values,
+    
+    Conexion.query("DELETE FROM productos WHERE IDProducto=? ", values,
+    
         (err, result) => {
+
             res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            
         }
+
     )
+
+    Conexion.end()
+
 }
 
 

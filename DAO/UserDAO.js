@@ -15,7 +15,7 @@ function getInstance(Row) {
 }
 
 //Create
-export async function Create(req, res){
+export function Create(req, res){
 
     UserModel.Nombre = req.body.Nombre
     UserModel.Apellido = req.body.Apellido
@@ -31,7 +31,7 @@ export async function Create(req, res){
             UserModel.Clave
         ]
 
-        await Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
+        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
            
             (err, result) => {
 
@@ -39,6 +39,8 @@ export async function Create(req, res){
 
             }
         )
+
+        Conexion.end()
 
     }else{
 
@@ -49,9 +51,9 @@ export async function Create(req, res){
 }
 
 //Read
-export async function List(req,res){
+export function List(req,res){
 
-   await Conexion.query(SqlQuery, () => {
+    Conexion.query(SqlQuery, () => {
         
         if(err || result.length == 0){
 
@@ -72,14 +74,16 @@ export async function List(req,res){
         }
     })
 
+    Conexion.end()
+
 }
 
-export async function Search(req, res){
+export function Search(req, res){
 
     const { id } = req.params
     const values = [id]
 
-    await Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
+    Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
 
         if(err || result.length == 0){
 
@@ -94,10 +98,12 @@ export async function Search(req, res){
 
     })
 
+    Conexion.end()
+
 }
 
 //Update
-export async function Update(UserModel, res){
+export function Update(UserModel, res){
 
     const values = [
         UserModel.Nombre,
@@ -106,7 +112,7 @@ export async function Update(UserModel, res){
         UserModel.Clave,
     ]
 
-    await Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=? WHERE IDUsuario=?", values,
+    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=? WHERE IDUsuario=?", values,
       
         (err, result) => {
 
@@ -115,14 +121,17 @@ export async function Update(UserModel, res){
         }
     )
 
+    Conexion.end()
+
 }
 
 //Delete
-export async function Delete(req, res){
+export function Delete(req, res){
     
     const UserModel = req.params
     const values = [UserModel.IDUsuario]
-    await Conexion.query("DELETE FROM usuarios WHERE IDUsuarios=?", values,
+    
+    Conexion.query("DELETE FROM usuarios WHERE IDUsuarios=?", values,
     
         (err, result) => {
 
@@ -130,4 +139,7 @@ export async function Delete(req, res){
 
         }
     )
+
+    Conexion.end()
+
 }
