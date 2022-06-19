@@ -2,8 +2,9 @@
 import ProductoModel from "../models/ProductoModel.js"
 import ImagenModel from "../models/ImagenModel.js"
 //importamos la Conexion
-import { Conexion, ConnectionRestart } from "../Conexion/Conexion.js"
+import { ConnectionRestart } from "../Conexion/Conexion.js"
 
+let Conexion = ConnectionRestart()
 let SqlQuery = "SELECT IDProducto, Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus FROM productos "
 let SqlQueryImagen = "SELECT `IDImagen`, `IDProducto`, `Nombre`, `FechaCreacion` FROM `imagenes` "
 
@@ -109,8 +110,8 @@ function modificar(productoModel, res) {
 //Mostrar todos los registros
 export const listar = (req, res) => {
     
-    Conexion.connect()
-    // ConnectionRestart()
+    // Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery, (err, result) => {
 
@@ -134,8 +135,8 @@ export const listar = (req, res) => {
 
     })
 
-    Conexion.destroy()
-    // Conexion.end()
+    // Conexion.destroy()
+    Conexion.end()
 
 }
 

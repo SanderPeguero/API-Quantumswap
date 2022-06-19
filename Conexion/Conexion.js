@@ -17,7 +17,9 @@ function ConnectionRestart(){
 			password: '3554998b',
 			database: 'heroku_292054ce91253dd'
 		});
-
+		
+		return Conexion
+		
 	}catch(err){
 
 		console.log("Error intentando reiniciar la conexion" + err)

@@ -1,6 +1,7 @@
 import UserModel from "../models/UserModel.js";
-import { Conexion, ConnectionRestart } from "../Conexion/Conexion.js";
+import { ConnectionRestart } from "../Conexion/Conexion.js";
 
+let Conexion = ConnectionRestart()
 let SqlQuery = "SELECT IDUsuario, Nombre, Apellido, Email, Clave FROM usuarios"
 
 //Instance
@@ -55,8 +56,8 @@ export function Create(req, res){
 //Read
 export function List(req,res){
 
-    Conexion.connect()
-    // ConnectionRestart()
+    // Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery, (err, result) => {
         
@@ -79,7 +80,7 @@ export function List(req,res){
         }
     })
 
-    Conexion.destroy()
+    Conexion.end()
 
 }
 
