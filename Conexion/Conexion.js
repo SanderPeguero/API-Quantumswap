@@ -7,7 +7,7 @@ const Conexion = mysql.createConnection({
 	database: 'heroku_292054ce91253dd'
 })
 
- function ConnectionRestart(){
+function ConnectionRestart(){
 	
 	try{
 
@@ -28,4 +28,4 @@ const Conexion = mysql.createConnection({
 		
 }
 
-export default { Conexion, ConnectionRestart } 
+export { Conexion, ConnectionRestart } 
