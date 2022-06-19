@@ -58,6 +58,8 @@ function insertar(productoModel, res) {
         productoModel.FechaModificacion,
         productoModel.Estatus
     ]
+    
+    Conexion.connect()
 
     Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
         
@@ -88,6 +90,8 @@ function modificar(productoModel, res) {
         productoModel.IDProducto
     ]
     
+    Conexion.connect()
+
     Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
     
         (err, result) => {
@@ -98,10 +102,14 @@ function modificar(productoModel, res) {
 
     )
 
+    Conexion.end()
+
 }
 
 //Mostrar todos los registros
 export const listar = (req, res) => {
+    
+    Conexion.connect()
 
     Conexion.query(SqlQuery, (err, result) => {
 
@@ -135,6 +143,8 @@ export const buscar = async (req, res) => {
     const { id } = req.params
 	const values = [id]
     
+    Conexion.connect()
+
     Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
 
         if (err || result.length == 0) {
@@ -160,12 +170,14 @@ export const eliminar = async (req, res) => {
     const ProductoModel = req.params
 	const values = [ProductoModel.IDProducto]
     
+    Conexion.connect()
+    
     Conexion.query("DELETE FROM productos WHERE IDProducto=? ", values,
     
         (err, result) => {
 
             res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
-            
+
         }
 
     )

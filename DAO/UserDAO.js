@@ -31,6 +31,8 @@ export function Create(req, res){
             UserModel.Clave
         ]
 
+        Conexion.connect()
+
         Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
            
             (err, result) => {
@@ -52,6 +54,8 @@ export function Create(req, res){
 
 //Read
 export function List(req,res){
+
+    Conexion.connect()
 
     Conexion.query(SqlQuery, () => {
         
@@ -83,6 +87,8 @@ export function Search(req, res){
     const { id } = req.params
     const values = [id]
 
+    Conexion.connect()
+
     Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
 
         if(err || result.length == 0){
@@ -99,6 +105,7 @@ export function Search(req, res){
     })
 
     Conexion.end()
+    
 
 }
 
@@ -111,6 +118,8 @@ export function Update(UserModel, res){
         UserModel.Email,
         UserModel.Clave,
     ]
+    
+    Conexion.connect()
 
     Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=? WHERE IDUsuario=?", values,
       
@@ -130,6 +139,8 @@ export function Delete(req, res){
     
     const UserModel = req.params
     const values = [UserModel.IDUsuario]
+    
+    Conexion.connect()
     
     Conexion.query("DELETE FROM usuarios WHERE IDUsuarios=?", values,
     
