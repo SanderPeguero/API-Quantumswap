@@ -60,7 +60,7 @@ function insertar(productoModel, res) {
         productoModel.Estatus
     ]
     
-    Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
         
@@ -91,7 +91,7 @@ function modificar(productoModel, res) {
         productoModel.IDProducto
     ]
     
-    Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
     
@@ -110,7 +110,6 @@ function modificar(productoModel, res) {
 //Mostrar todos los registros
 export const listar = (req, res) => {
     
-    // Conexion.connect()
     Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery, (err, result) => {
@@ -146,7 +145,7 @@ export const buscar = async (req, res) => {
     const { id } = req.params
 	const values = [id]
     
-    Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
 
@@ -173,7 +172,7 @@ export const eliminar = async (req, res) => {
     const ProductoModel = req.params
 	const values = [ProductoModel.IDProducto]
     
-    Conexion.connect()
+    Conexion = ConnectionRestart() 
 
     Conexion.query("DELETE FROM productos WHERE IDProducto=? ", values,
     
