@@ -67,9 +67,9 @@ export function List(req,res){
 
             let data = []
 
-            for(let s = 0; s < result.length; i++){
+            for(let s = 0; s < result.length; s++){
 
-                let row = result[i]
+                let row = result[s]
                 data.push(Object.assign({}, getInstance(row)))
 
             }
