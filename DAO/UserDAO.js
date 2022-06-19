@@ -55,7 +55,7 @@ export function Create(req, res){
 //Read
 export function List(req,res){
 
-    // Conexion.connect()
+    Conexion.connect()
     // ConnectionRestart()
 
     Conexion.query(SqlQuery, (err, result) => {
@@ -79,7 +79,7 @@ export function List(req,res){
         }
     })
 
-    // Conexion.end()
+    Conexion.destroy()
 
 }
 

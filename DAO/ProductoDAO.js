@@ -109,7 +109,7 @@ function modificar(productoModel, res) {
 //Mostrar todos los registros
 export const listar = (req, res) => {
     
-    // Conexion.connect()
+    Conexion.connect()
     // ConnectionRestart()
 
     Conexion.query(SqlQuery, (err, result) => {
@@ -134,6 +134,7 @@ export const listar = (req, res) => {
 
     })
 
+    Conexion.destroy()
     // Conexion.end()
 
 }
