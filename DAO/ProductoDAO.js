@@ -167,10 +167,10 @@ export const buscar = async (req, res) => {
 }
 
 //Eliminar un registro
-export const eliminar = async (req, res) => {
+export const eliminar = (req, res) => {
 
-    const ProductoModel = req.params
-	const values = [ProductoModel.IDProducto]
+    const { id } = req.params
+	const values = [id]
     
     Conexion = ConnectionRestart() 
 
