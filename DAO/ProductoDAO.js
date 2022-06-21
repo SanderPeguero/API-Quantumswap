@@ -174,7 +174,7 @@ export const eliminar = (req, res) => {
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("DELETE FROM productos WHERE IDProducto=? ", values,
+    Conexion.query("DELETE FROM productos WHERE IDProducto = ? ", values,
     
         (err, result) => {
 
