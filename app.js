@@ -21,7 +21,7 @@ try {
 */
 
 app.get('/', (req, res)=>{
-    res.send('Bienvenido al API de QuantumSwapp!')
+    res.send('Bienvenido al API de QuantumSwap!')
 })
 
 app.listen( process.env.PORT || 4000, ()=>{

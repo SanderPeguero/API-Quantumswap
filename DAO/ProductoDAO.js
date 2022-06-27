@@ -190,8 +190,6 @@ export const eliminar = (req, res) => {
 
 
 
-
-
 //obtiene una instancia de un modelo a partir de un registro de una tabla de base de datos
 function getInstanciaImagen(resultSet) {
     ImagenModel.IDImagen = resultSet.IDImagen
