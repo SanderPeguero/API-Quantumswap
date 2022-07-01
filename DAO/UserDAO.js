@@ -126,7 +126,7 @@ export function Update(UserModel, res){
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=?, SecretKey=? WHERE IDUsuario=?", values,
+    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=?, SecretKey=? WHERE IDUsuario = ? ", values,
       
         (err, result) => {
 
