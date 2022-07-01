@@ -23,7 +23,7 @@ export function Create(req, res){
     UserModel.Apellido = req.body.Apellido
     UserModel.Email = req.body.Email
     UserModel.Clave = req.body.Clave
-    UserModel.SecretKey = Row.SecretKey
+    UserModel.SecretKey = req.SecretKey
     
     if(UserModel.IDUsuario == null || UserModel.IDUsuario == 0){
 
