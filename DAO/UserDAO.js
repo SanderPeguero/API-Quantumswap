@@ -32,7 +32,7 @@ export function Login(req, res){
         }
         else
         {
-            console.log(result);
+            //console.log(result);
             console.log(req.body);
             console.log("#############################result.length: " + result.length);
             console.log(req);
