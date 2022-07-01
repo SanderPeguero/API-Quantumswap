@@ -1,6 +1,6 @@
 import express from 'express'
 import { Create, List, Search, Delete } from '../DAO/UserDAO.js'
-import query from './query.js'
+import query from '../query.js'
 
 const router = express.Router()
 
