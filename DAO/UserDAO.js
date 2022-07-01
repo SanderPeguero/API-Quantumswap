@@ -19,6 +19,7 @@ function getInstance(Row) {
 //Create
 export function Create(req, res){
 
+    UserModel.IDUsuario = 0
     UserModel.Nombre = req.body.Nombre
     UserModel.Apellido = req.body.Apellido
     UserModel.Email = req.body.Email
