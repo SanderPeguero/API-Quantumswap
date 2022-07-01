@@ -32,7 +32,7 @@ export function Login(req, res){
         }
         else
         {
-            let data = (result.length > 0) ? getInstance(result[0]) : null
+            let data = result
             res.json({ Data: data, MensajeError: err })
 
         }
