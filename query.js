@@ -2,7 +2,7 @@ import { ConnectionRestart } from "./Conexion/Conexion.js";
 
 let Conexion = ConnectionRestart()
 
-function query(values){
+function query(res){
     
     Conexion = ConnectionRestart()
 
@@ -10,7 +10,7 @@ function query(values){
        
         (err, result) => {
 
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json({ Success: result, MensajeError: err })
 
         }
 
