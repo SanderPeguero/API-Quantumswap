@@ -23,7 +23,6 @@ export function Create(req, res){
     UserModel.Apellido = req.body.Apellido
     UserModel.Email = req.body.Email
     UserModel.Clave = req.body.Clave
-    UserModel.SecretKey = req.SecretKey
     
     if(UserModel.IDUsuario == null || UserModel.IDUsuario == 0){
 
@@ -31,13 +30,12 @@ export function Create(req, res){
             UserModel.Nombre,
             UserModel.Apellido,
             UserModel.Email,
-            UserModel.Clave,
-            UserModel.SecretKey
+            UserModel.Clave
         ]
 
         Conexion = ConnectionRestart() 
 
-        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave, SecretKey) VALUES (?,?,?,?,?)", values,
+        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
            
             (err, result) => {
 
