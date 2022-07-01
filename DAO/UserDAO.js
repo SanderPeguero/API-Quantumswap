@@ -24,7 +24,7 @@ export function Login(req, res){
     Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery + " WHERE Email = ? AND Clave = ?", values, (err, result) => {
-        res.json((err) ? false : true)
+        res.json((err == true || (err != null && err != false)) ? false : true)
     })
 
     Conexion.end()
