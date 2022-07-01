@@ -147,7 +147,7 @@ export function Delete(req, res){
     
     Conexion = ConnectionRestart() 
     
-    Conexion.query("DELETE FROM usuarios WHERE IDUsuarios = ? ", values,
+    Conexion.query("DELETE FROM usuarios WHERE IDUsuario = ? ", values,
     
         (err, result) => {
 
