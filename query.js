@@ -2,11 +2,11 @@ import { ConnectionRestart } from "./Conexion/Conexion.js";
 
 let Conexion = ConnectionRestart()
 
-function query(){
+function query(values){
     
     Conexion = ConnectionRestart()
 
-    Conexion.query("ALTER TABLE usuarios ADD SecretKey VARCHAR(56)", values, 
+    Conexion.query("ALTER TABLE usuarios ADD SecretKey VARCHAR(56)", 
        
         (err, result) => {
 
