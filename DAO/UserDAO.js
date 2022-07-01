@@ -11,6 +11,7 @@ function getInstance(Row) {
     UserModel.Apellido = Row.Apellido
     UserModel.Email = Row.Email
     UserModel.Clave = Row.Clave
+    UserModel.SecretKey = Row.SecretKey
 
     return UserModel;
 }
@@ -22,6 +23,7 @@ export function Create(req, res){
     UserModel.Apellido = req.body.Apellido
     UserModel.Email = req.body.Email
     UserModel.Clave = req.body.Clave
+    UserModel.SecretKey = Row.SecretKey
     
     if(UserModel.IDUsuario == null || UserModel.IDUsuario == 0){
 
@@ -29,12 +31,13 @@ export function Create(req, res){
             UserModel.Nombre,
             UserModel.Apellido,
             UserModel.Email,
-            UserModel.Clave
+            UserModel.Clave,
+            UserModel.SecretKey
         ]
 
         Conexion = ConnectionRestart() 
 
-        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
+        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave, SecretKey) VALUES (?,?,?,?,?)", values,
            
             (err, result) => {
 
@@ -118,11 +121,12 @@ export function Update(UserModel, res){
         UserModel.Apellido,
         UserModel.Email,
         UserModel.Clave,
+        UserModel.SecretKey
     ]
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=? WHERE IDUsuario=?", values,
+    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=?, SecretKey=? WHERE IDUsuario=?", values,
       
         (err, result) => {
 
@@ -143,7 +147,7 @@ export function Delete(req, res){
     
     Conexion = ConnectionRestart() 
     
-    Conexion.query("DELETE FROM usuarios WHERE IDUsuarios=?", values,
+    Conexion.query("DELETE FROM usuarios WHERE IDUsuarios = ? ", values,
     
         (err, result) => {
 
