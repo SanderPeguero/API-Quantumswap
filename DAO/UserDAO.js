@@ -16,6 +16,32 @@ function getInstance(Row) {
     return UserModel;
 }
 
+export function Login(req, res){
+
+    const { Email, Clave } = req.params
+    const values = [id]
+
+    Conexion = ConnectionRestart() 
+
+    Conexion.query(SqlQuery + " WHERE Email = ? AND Clave = ?", values, (err, result) => {
+
+        if(err){
+
+            res.json({ Data: null, MensajeError: err })
+
+        }
+        else
+        {
+            let data = (result.length > 0) ? getInstance(result[0]) : null
+            res.json({ Data: data, MensajeError: err })
+
+        }
+
+    })
+
+    Conexion.end()
+}
+
 //Create
 export function Create(req, res){
 
@@ -108,8 +134,6 @@ export function Search(req, res){
     })
 
     Conexion.end()
-    
-
 }
 
 //Update
