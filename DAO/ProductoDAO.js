@@ -122,7 +122,7 @@ export const listar = (req, res) => {
         
         }
         
-        return res.json( data )
+        return res.json({ Data: data, MensajeError: err })
     })
 
     // Conexion.destroy()
