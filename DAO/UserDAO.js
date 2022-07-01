@@ -33,8 +33,9 @@ export function Login(req, res){
         else
         {
             console.log(result);
-            console.log(req.params);
+            console.log(req.body);
             console.log("#############################result.length: " + result.length);
+            console.log(req);
             let data = result
             res.json({ Data: data, MensajeError: err })
 
