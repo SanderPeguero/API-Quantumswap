@@ -12,6 +12,10 @@ let SqlQueryImagen = "SELECT `IDImagen`, `IDProducto`, `Nombre`, `FechaCreacion`
 
 //obtiene una instancia de un modelo a partir de un registro de una tabla de base de datos
 function getInstancia(fila) {
+    if (fila == null) {
+        return ProductoModel
+    }
+
     ProductoModel.IDProducto = fila.IDProducto
     ProductoModel.Descripcion = fila.Descripcion
     ProductoModel.CantidadRestante = fila.CantidadRestante
@@ -65,9 +69,7 @@ function insertar(productoModel, res) {
     Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
         
         (err, result) => {
-
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
-
+            res.json( !err && result.affectedRows > 0 )
         }
 
     )
@@ -96,9 +98,7 @@ function modificar(productoModel, res) {
     Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
     
         (err, result) => {
-        
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
-
+            res.json( !err && result.affectedRows > 0 )
         }
 
     )
@@ -113,25 +113,16 @@ export const listar = (req, res) => {
     Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery, (err, result) => {
-
-        if (err || result.length == 0) {
+        let data = []
         
-            res.json({ Data: null, MensajeError: err })
-
-        } else {
-            
-            let data = new Array()
-            
-            for (let i = 0; i < result.length; i++) {
-            
-                let fila = result[i];
-                data.push(Object.assign({}, getInstancia(fila)))
-            
-            }
-            
-            return res.json({ Data: data, MensajeError: err })
+        for (let i = 0; i < result.length; i++) {
+        
+            let fila = result[i];
+            data.push(Object.assign({}, getInstancia(fila)))
+        
         }
-
+        
+        return res.json( data )
     })
 
     // Conexion.destroy()
@@ -148,18 +139,8 @@ export const buscar = async (req, res) => {
     Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
-
-        if (err || result.length == 0) {
-        
-            res.json({ Data: null, MensajeError: err })
-        
-        } else {
-        
-            let data = getInstancia(result[0])
-            res.json({ Data: data, MensajeError: err })
-        
-        }
-    
+        let data = getInstancia(result[0])
+        res.json( data )
     })
 
     Conexion.end()
@@ -178,7 +159,7 @@ export const eliminar = (req, res) => {
     
         (err, result) => {
 
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
 
         }
 
@@ -218,7 +199,7 @@ async function insertarImagen(imagenModel, res) {
     ]
     await Conexion.query("INSERT INTO imagenes (IDProducto, Nombre, FechaCreacion) VALUES (?, ?, ?)", values,
         (err, result) => {
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
         }
     )
 }
@@ -231,7 +212,7 @@ async function modificarImagen(imagenModel, res) {
     ]
     await Conexion.query("UPDATE imagenes SET Nombre = ? WHERE IDImagen = ?", values,
         (err, result) => {
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
         }
     )
 }
@@ -256,12 +237,8 @@ export const buscarImagen = async (req, res) => {
     const { id } = req.params
 	const values = [id]
     await Conexion.query(SqlQueryImagen + " WHERE IDImagen = ? ", values, (err, result) => {
-        if (err || result.length == 0) {
-            res.json({ Data: null, MensajeError: err })
-        } else {
-            let data = getInstanciaImagen(result[0])
-            res.json({ Data: data, MensajeError: err })
-        }
+        let data = getInstanciaImagen(result[0])
+        res.json( data )
     })
 }
 
@@ -271,7 +248,7 @@ export const eliminarImagen = async (req, res) => {
 	const values = [ImagenModel.IDImagen]
     await Conexion.query("DELETE FROM imagens WHERE IDImagen=? ", values,
         (err, result) => {
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
         }
     )
 }

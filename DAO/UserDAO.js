@@ -6,6 +6,10 @@ let SqlQuery = "SELECT IDUsuario, Nombre, Apellido, Email, Clave, SecretKey FROM
 
 //Instance
 function getInstance(Row) {
+    if (Row == null) {
+        return UserModel
+    }
+
     UserModel.IDUsuario = Row.IDUsuario
     UserModel.Nombre = Row.Nombre
     UserModel.Apellido = Row.Apellido
@@ -13,7 +17,7 @@ function getInstance(Row) {
     UserModel.Clave = Row.Clave
     UserModel.SecretKey = Row.SecretKey
 
-    return UserModel;
+    return UserModel
 }
 
 export function Login(req, res){
@@ -21,12 +25,10 @@ export function Login(req, res){
     const { Email, Clave } = req.body
     const values = [Email, Clave]
 
-    Conexion = ConnectionRestart() 
+    Conexion = ConnectionRestart()
 
     Conexion.query(SqlQuery + " WHERE Email = ? AND Clave = ?", values, (err, result) => {
-        console.log("#############################3")
-        console.log(err)
-        res.json(err == null && result.length > 0)
+        res.json(getInstance(result.length > 0 ? result[0] : null))
     })
 
     Conexion.end()
@@ -56,7 +58,7 @@ export function Create(req, res){
            
             (err, result) => {
 
-                res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+                res.json( !err && result.affectedRows > 0 )
 
             }
         )
@@ -78,23 +80,16 @@ export function List(req,res){
 
     Conexion.query(SqlQuery, (err, result) => {
         
-        if(err || result.length == 0){
+        let data = []
 
-            res.json({ Data: null, MensajeError: err })
+        for(let s = 0; s < result.length; s++){
 
-        } else {
+            let row = result[s]
+            data.push(Object.assign({}, getInstance(row)))
 
-            let data = []
-
-            for(let s = 0; s < result.length; s++){
-
-                let row = result[s]
-                data.push(Object.assign({}, getInstance(row)))
-
-            }
-
-            return res.json({ Data: data, MensajeError: err })
         }
+
+        return res.json( data )
     })
 
     Conexion.end()
@@ -109,18 +104,8 @@ export function Search(req, res){
     Conexion = ConnectionRestart() 
 
     Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
-
-        if(err || result.length == 0){
-
-            res.json({ Data: null, MensajeError: err })
-
-        }else{
-
-            let data = getInstance(result[0])
-            res.json({ Data: data, MensajeError: err })
-
-        }
-
+        let data = getInstance(result.length > 0 ? result[0] : null)
+        res.json({ data })
     })
 
     Conexion.end()

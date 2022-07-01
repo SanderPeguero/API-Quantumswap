@@ -1,11 +1,11 @@
 
 const UserModel = {
     IDUsuario: 0,
-    Nombre: String,
-    Apellido: String,
-    Email: String,
-    Clave: String,
-    SecretKey: String
+    Nombre: "",
+    Apellido: "",
+    Email: "",
+    Clave: "",
+    SecretKey: ""
 }
 
 export default UserModel

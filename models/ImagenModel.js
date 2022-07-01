@@ -1,9 +1,9 @@
 
 const ProductoModel = {
-    IDImagen: Number,
-    IDProducto: Number,
-    Nombre: String,
-    FechaCreacion: Date
+    IDImagen: 0,
+    IDProducto: 0,
+    Nombre: "",
+    FechaCreacion: ""
 }
 
 export default ProductoModel

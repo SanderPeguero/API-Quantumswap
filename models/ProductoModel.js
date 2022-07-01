@@ -1,16 +1,16 @@
 
 const ProductoModel = {
-    IDProducto: Number,
-    Descripcion: String,
-    CantidadRestante: Number,
-    Costo: Number,
-    Precio: Number,
-    Descuento: Number,
-    QRCode: String,
-    FechaCreacion: Date,
-    FechaModificacion: Date,
-    Estatus: Number,
-    Imagenes: Array
+    IDProducto: 0,
+    Descripcion: "",
+    CantidadRestante: 0,
+    Costo: 0,
+    Precio: 0,
+    Descuento: 0,
+    QRCode: "",
+    FechaCreacion: "",
+    FechaModificacion: "",
+    Estatus: 0,
+    Imagenes: []
 }
 
 export default ProductoModel
