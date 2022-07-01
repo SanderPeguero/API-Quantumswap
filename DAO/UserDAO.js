@@ -142,8 +142,8 @@ export function Update(UserModel, res){
 //Delete
 export function Delete(req, res){
     
-    const UserModel = req.params
-    const values = [UserModel.IDUsuario]
+    const { id } = req.params
+    const values = [id]
     
     Conexion = ConnectionRestart() 
     
