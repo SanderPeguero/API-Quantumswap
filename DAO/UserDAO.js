@@ -2,7 +2,7 @@ import UserModel from "../models/UserModel.js";
 import { ConnectionRestart } from "../Conexion/Conexion.js";
 
 let Conexion = ConnectionRestart()
-let SqlQuery = "SELECT IDUsuario, Nombre, Apellido, Email, Clave FROM usuarios"
+let SqlQuery = "SELECT IDUsuario, Nombre, Apellido, Email, Clave, SecretKey FROM usuarios"
 
 //Instance
 function getInstance(Row) {
