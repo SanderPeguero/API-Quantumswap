@@ -19,3 +19,5 @@ function query(){
     Conexion.end()
 
 }
+
+export default query
