@@ -19,7 +19,7 @@ function getInstance(Row) {
 export function Login(req, res){
 
     const { Email, Clave } = req.params
-    const values = [id]
+    const values = [Email, Clave]
 
     Conexion = ConnectionRestart() 
 
