@@ -1,10 +1,10 @@
 
 const UserModel = {
-    IDUsuario: 0,
-    Nombre: "",
-    Apellido: "",
+    UserId: 0,
+    Name: "",
+    LastName: "",
     Email: "",
-    Clave: "",
+    Password: "",
     SecretKey: ""
 }
 

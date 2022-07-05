@@ -2,7 +2,7 @@ import UserModel from "../models/UserModel.js";
 import { ConnectionRestart } from "../Conexion/Conexion.js";
 
 let Conexion = ConnectionRestart()
-let SqlQuery = "SELECT IDUsuario, Nombre, Apellido, Email, Clave, SecretKey FROM usuarios"
+let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey FROM users"
 
 //Instance
 function getInstance(Row) {
@@ -10,11 +10,11 @@ function getInstance(Row) {
         return UserModel
     }
 
-    UserModel.IDUsuario = Row.IDUsuario
-    UserModel.Nombre = Row.Nombre
-    UserModel.Apellido = Row.Apellido
+    UserModel.UserId = Row.UserId
+    UserModel.Name = Row.Name
+    UserModel.LastName = Row.LastName
     UserModel.Email = Row.Email
-    UserModel.Clave = Row.Clave
+    UserModel.Password = Row.Password
     UserModel.SecretKey = Row.SecretKey
 
     return UserModel
@@ -22,12 +22,12 @@ function getInstance(Row) {
 
 export function Login(req, res){
 
-    const { Email, Clave } = req.body
-    const values = [Email, Clave]
+    const { Email, Password } = req.body
+    const values = [Email, Password]
 
     Conexion = ConnectionRestart()
 
-    Conexion.query(SqlQuery + " WHERE Email = ? AND Clave = ?", values, (err, result) => {
+    Conexion.query(SqlQuery + " WHERE Email = ? AND Password = ?", values, (err, result) => {
         res.json(getInstance(result.length > 0 ? result[0] : null))
     })
 
@@ -37,24 +37,24 @@ export function Login(req, res){
 //Create
 export function Create(req, res){
 
-    UserModel.IDUsuario = 0
-    UserModel.Nombre = req.body.Nombre
-    UserModel.Apellido = req.body.Apellido
+    UserModel.UserId = 0
+    UserModel.Name = req.body.Name
+    UserModel.LastName = req.body.LastName
     UserModel.Email = req.body.Email
-    UserModel.Clave = req.body.Clave
+    UserModel.Password = req.body.Password
     
-    if(UserModel.IDUsuario == null || UserModel.IDUsuario == 0){
+    if(UserModel.UserId == null || UserModel.UserId == 0){
 
         const values = [
-            UserModel.Nombre,
-            UserModel.Apellido,
+            UserModel.Name,
+            UserModel.LastName,
             UserModel.Email,
-            UserModel.Clave
+            UserModel.Password
         ]
 
         Conexion = ConnectionRestart() 
 
-        Conexion.query("INSERT INTO usuarios (Nombre, Apellido, Email, Clave) VALUES (?,?,?,?)", values,
+        Conexion.query("INSERT INTO users (Name, LastName, Email, Password) VALUES (?,?,?,?)", values,
            
             (err, result) => {
 
@@ -103,7 +103,7 @@ export function Search(req, res){
 
     Conexion = ConnectionRestart() 
 
-    Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
+    Conexion.query(SqlQuery + " WHERE UserId = ?", values, (err, result) => {
         let data = getInstance(result.length > 0 ? result[0] : null)
         res.json( data )
     })
@@ -115,16 +115,16 @@ export function Search(req, res){
 export function Update(UserModel, res){
 
     const values = [
-        UserModel.Nombre,
-        UserModel.Apellido,
+        UserModel.Name,
+        UserModel.LastName,
         UserModel.Email,
-        UserModel.Clave,
+        UserModel.Password,
         UserModel.SecretKey
     ]
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("UPDATE usuarios SET Nombre=?, Apellido=?, Email=?, Clave=?, SecretKey=? WHERE IDUsuario = ? ", values,
+    Conexion.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=?, SecretKey=? WHERE UserId = ? ", values,
       
         (err, result) => {
 
@@ -145,7 +145,7 @@ export function Delete(req, res){
     
     Conexion = ConnectionRestart() 
     
-    Conexion.query("DELETE FROM usuarios WHERE IDUsuario = ? ", values,
+    Conexion.query("DELETE FROM users WHERE UserId = ? ", values,
     
         (err, result) => {
 
