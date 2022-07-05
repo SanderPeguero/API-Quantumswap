@@ -105,7 +105,7 @@ export function Search(req, res){
 
     Conexion.query(SqlQuery + " WHERE IDUsuario = ?", values, (err, result) => {
         let data = getInstance(result.length > 0 ? result[0] : null)
-        res.json({ data })
+        res.json( data )
     })
 
     Conexion.end()
@@ -128,7 +128,7 @@ export function Update(UserModel, res){
       
         (err, result) => {
 
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
             
         }
     )
@@ -149,7 +149,7 @@ export function Delete(req, res){
     
         (err, result) => {
 
-            res.json({ Success: (!err && result.affectedRows > 0), MensajeError: err })
+            res.json( !err && result.affectedRows > 0 )
 
         }
     )
