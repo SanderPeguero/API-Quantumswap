@@ -1,4 +1,4 @@
-import { ConnectionRestart } from "./Conexion/Conexion.js";
+import { ConnectionRestart } from "./Connection/Connection.js";
 
 let Conexion = ConnectionRestart()
 

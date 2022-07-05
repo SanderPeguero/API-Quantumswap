@@ -9,8 +9,7 @@ const ProductModel = {
     Image: "",
     CreationDate: "",
     ModificationDate: "",
-    Status: 0,
-    Images: []
+    Status: 0
 }
 
 export default ProductModel

@@ -1,15 +1,15 @@
 import express  from "express"
 import cors from 'cors'
 //importamos nuestro enrutador
-import productoRoutes from './routes/productos.js'
+import productoRoutes from './routes/products.js'
 import userRoutes from './routes/users.js'
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use('/productos', productoRoutes)
-app.use('/usuarios', userRoutes)
+app.use('/products', productoRoutes)
+app.use('/users', userRoutes)
 
 /*
 try {
@@ -21,9 +21,9 @@ try {
 */
 
 app.get('/', (req, res)=>{
-    res.send('Bienvenido al API de QuantumSwap!')
+    res.send('Welcome to the QuantumSwap API!')
 })
 
 app.listen( process.env.PORT || 4000, ()=>{
-    console.log('Servidor Iniciado!')
+    console.log('Server Started!')
 })

@@ -1,6 +1,6 @@
 import mysql from 'mysql'
 
-const Conexion = mysql.createConnection({
+const Connection = mysql.createConnection({
 	host: 'us-cdbr-east-05.cleardb.net',
 	user: 'bfdc36de5e97cf',
 	password: '3554998b',
@@ -11,23 +11,23 @@ function ConnectionRestart(){
 	
 	try{
 
-		var Conexion = mysql.createConnection({
+		var Connection = mysql.createConnection({
 			host: 'us-cdbr-east-05.cleardb.net',
 			user: 'bfdc36de5e97cf',
 			password: '3554998b',
 			database: 'heroku_292054ce91253dd'
 		});
 		
-		return Conexion
+		return Connection
 		
 	}catch(err){
 
-		console.log("Error intentando reiniciar la conexion" + err)
-		Conexion.on('error', ConnectionRestart())
+		console.log("Error intentando reiniciar la Connection" + err)
+		Connection.on('error', ConnectionRestart())
 
 	}
 
 		
 }
 
-export { Conexion, ConnectionRestart } 
+export { Connection, ConnectionRestart } 

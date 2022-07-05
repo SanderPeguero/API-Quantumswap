@@ -1,15 +1,15 @@
 import express from 'express'
-import { Create, List, Search, Delete, Login } from '../DAO/UserDAO.js'
+import { saveInstance, listInstances, findInstance, deleteInstance, findInstanceByEmail } from '../BLL/UserBLL.js'
 import query from '../query.js'
 
 const router = express.Router()
 
-router.post('/login', Login)
+router.post('/login', findInstanceByEmail)
 
-router.get('/', List)
-router.get('/:id', Search)
-router.put('/', Create)
-router.delete('/:id', Delete)
+router.get('/', listInstances)
+router.get('/:id', findInstance)
+router.put('/', saveInstance)
+router.delete('/:id', deleteInstance)
 router.post('/query', query)
 
 
