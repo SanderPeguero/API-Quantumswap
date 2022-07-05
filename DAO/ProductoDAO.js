@@ -1,72 +1,72 @@
 //importamos el Modelo
-import ProductoModel from "../models/ProductoModel.js"
+import ProductModel from "../models/ProductModel.js"
 import ImagenModel from "../models/ImagenModel.js"
 //importamos la Conexion
 import { ConnectionRestart } from "../Conexion/Conexion.js"
 
 let Conexion = ConnectionRestart()
-let SqlQuery = "SELECT IDProducto, Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus FROM productos "
-let SqlQueryImagen = "SELECT `IDImagen`, `IDProducto`, `Nombre`, `FechaCreacion` FROM `imagenes` "
+let SqlQuery = "SELECT ProductId, Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status FROM products "
+let SqlQueryImagen = "SELECT `IDImagen`, `ProductId`, `Nombre`, `CreationDate` FROM `imagenes` "
 
 //** Métodos para el CRUD **/
 
 //obtiene una instancia de un modelo a partir de un registro de una tabla de base de datos
 function getInstancia(fila) {
     if (fila == null) {
-        return ProductoModel
+        return ProductModel
     }
 
-    ProductoModel.IDProducto = fila.IDProducto
-    ProductoModel.Descripcion = fila.Descripcion
-    ProductoModel.CantidadRestante = fila.CantidadRestante
-    ProductoModel.Costo = fila.Costo
-    ProductoModel.Precio = fila.Precio
-    ProductoModel.Descuento = fila.Descuento
-    ProductoModel.QRCode = fila.QRCode
-    ProductoModel.FechaCreacion = fila.FechaCreacion
-    ProductoModel.FechaModificacion = fila.FechaModificacion
-    ProductoModel.Estatus = fila.Estatus
-    if (ProductoModel.IDProducto > 0) {
-        ProductoModel.Imagenes = listarImagenes(ProductoModel.IDProducto)
+    ProductModel.ProductId = fila.ProductId
+    ProductModel.Description = fila.Description
+    ProductModel.Stock = fila.Stock
+    ProductModel.Cost = fila.Cost
+    ProductModel.Price = fila.Price
+    ProductModel.Discount = fila.Discount
+    ProductModel.Image = fila.Image
+    ProductModel.CreationDate = fila.CreationDate
+    ProductModel.ModificationDate = fila.ModificationDate
+    ProductModel.Status = fila.Status
+    if (ProductModel.ProductId > 0) {
+        //ProductModel.Images = listarImagenes(ProductModel.ProductId)
     }
-    return ProductoModel
+    return ProductModel
 }
 
 //guardar datos
 export const guardar = async (req, res) => {
 
-    const ProductoModel = req.body
+    const ProductModel = req.body
 
-    if (ProductoModel.IDProducto == 0) {
+    if (ProductModel.ProductId == 0) {
         
-        insertar(ProductoModel, res)
+        insertar(ProductModel, res)
 
     } else {
         
-        modificar(ProductoModel, res)
+        modificar(ProductModel, res)
 
     }
 
 }
 
 //Crear un registro
-function insertar(productoModel, res) {
+function insertar(productModel, res) {
 	
     const values = [
-        productoModel.Descripcion,
-        productoModel.CantidadRestante,
-        productoModel.Costo,
-        productoModel.Precio,
-        productoModel.Descuento,
-        productoModel.QRCode,
-        productoModel.FechaCreacion,
-        productoModel.FechaModificacion,
-        productoModel.Estatus
+        productModel.Description,
+        productModel.Stock,
+        productModel.Cost,
+        productModel.Price,
+        productModel.Discount,
+        productModel.Image,
+        productModel.CreationDate,
+        productModel.ModificationDate,
+        productModel.Status
     ]
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("INSERT INTO productos (Descripcion, CantidadRestante, Costo, Precio, Descuento, QRCode, FechaCreacion, FechaModificacion, Estatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
+    Conexion.query("INSERT INTO productos (Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values,
         
         (err, result) => {
             res.json( !err && result.affectedRows > 0 )
@@ -78,24 +78,24 @@ function insertar(productoModel, res) {
 }
 
 //Actualizar un registro
-function modificar(productoModel, res) {
+function modificar(productModel, res) {
 
 	const values = [
-        productoModel.Descripcion,
-        productoModel.CantidadRestante,
-        productoModel.Costo,
-        productoModel.Precio,
-        productoModel.Descuento,
-        productoModel.QRCode,
-        productoModel.FechaCreacion,
-        productoModel.FechaModificacion,
-        productoModel.Estatus,
-        productoModel.IDProducto
+        productModel.Description,
+        productModel.Stock,
+        productModel.Cost,
+        productModel.Price,
+        productModel.Discount,
+        productModel.Image,
+        productModel.CreationDate,
+        productModel.ModificationDate,
+        productModel.Status,
+        productModel.ProductId
     ]
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("UPDATE productos SET Descripcion=?, CantidadRestante=?, Costo=?, Precio=?, Descuento=?, QRCode=?, FechaCreacion=?, FechaModificacion=?, Estatus=? WHERE IDProducto=?", values,
+    Conexion.query("UPDATE productos SET Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, CreationDate=?, ModificationDate=?, Status=? WHERE ProductId=?", values,
     
         (err, result) => {
             res.json( !err && result.affectedRows > 0 )
@@ -138,7 +138,7 @@ export const buscar = async (req, res) => {
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query(SqlQuery + " WHERE IDProducto = ? ", values, (err, result) => {
+    Conexion.query(SqlQuery + " WHERE ProductId = ? ", values, (err, result) => {
         let data = getInstancia(result[0])
         res.json( data )
     })
@@ -155,7 +155,7 @@ export const eliminar = (req, res) => {
     
     Conexion = ConnectionRestart() 
 
-    Conexion.query("DELETE FROM productos WHERE IDProducto = ? ", values,
+    Conexion.query("DELETE FROM productos WHERE ProductId = ? ", values,
     
         (err, result) => {
 
@@ -174,9 +174,9 @@ export const eliminar = (req, res) => {
 //obtiene una instancia de un modelo a partir de un registro de una tabla de base de datos
 function getInstanciaImagen(resultSet) {
     ImagenModel.IDImagen = resultSet.IDImagen
-    ImagenModel.IDProducto = resultSet.IDProducto
+    ImagenModel.ProductId = resultSet.ProductId
     ImagenModel.Nombre = resultSet.Nombre
-    ImagenModel.FechaCreacion = resultSet.FechaCreacion
+    ImagenModel.CreationDate = resultSet.CreationDate
     return ImagenModel
 }
 
@@ -193,11 +193,11 @@ export const guardarImagen = async (req, res) => {
 //Crear un registro
 async function insertarImagen(imagenModel, res) {
 	const values = [
-        imagenModel.IDProducto,
+        imagenModel.ProductId,
         imagenModel.Nombre,
-        imagenModel.FechaCreacion
+        imagenModel.CreationDate
     ]
-    await Conexion.query("INSERT INTO imagenes (IDProducto, Nombre, FechaCreacion) VALUES (?, ?, ?)", values,
+    await Conexion.query("INSERT INTO imagenes (ProductId, Nombre, CreationDate) VALUES (?, ?, ?)", values,
         (err, result) => {
             res.json( !err && result.affectedRows > 0 )
         }
@@ -221,7 +221,7 @@ async function modificarImagen(imagenModel, res) {
 async function listarImagenes(id) {
     let data = []
 	const values = [id]
-    await Conexion.query(SqlQueryImagen + " WHERE IDProducto = " + id,
+    await Conexion.query(SqlQueryImagen + " WHERE ProductId = " + id,
      id, (err, result) => {
         if (!err && result.length > 0) {
             result.forEach(fila => {
