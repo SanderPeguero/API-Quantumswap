@@ -1,5 +1,5 @@
 //importamos el Modelo
-import { getInstanceProduct } from "../Models/ProductModel.js"
+import { getInstanceProduct } from "../models/ProductModel.js"
 //importamos la Connection
 import { ConnectionStart } from "../DAL/Connection.js"
 
