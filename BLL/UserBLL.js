@@ -1,5 +1,5 @@
 import { getUserInstance } from "../Models/UserModel.js";
-import { ConnectionStart } from "../DAL/Connection.js";
+import { ConnectionStart } from "../DAL/Connection.js"; 
 
 let Connection = ConnectionStart()
 let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey FROM users "
