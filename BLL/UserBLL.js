@@ -1,4 +1,4 @@
-import { getUserInstance } from "../models/UserModel.js";
+import { getUserInstance } from "../Models/UserModel.js";
 import { ConnectionStart } from "../DAL/Connection.js";
 
 let Connection = ConnectionStart()

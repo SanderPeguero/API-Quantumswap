@@ -1,6 +1,6 @@
 //importamos el Modelo
-import { getInstanceShoppingCart } from "../models/ShoppingCartModel.js"
-import { getInstanceProduct } from "../models/ProductModel.js"
+import { getInstanceShoppingCart } from "../Models/ShoppingCartModel.js"
+import { getInstanceProduct } from "../Models/ProductModel.js"
 //importamos la Connection
 import { ConnectionStart } from "../DAL/Connection.js"
 
