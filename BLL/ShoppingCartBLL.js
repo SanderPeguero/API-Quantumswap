@@ -60,7 +60,7 @@ function insertInstance(shoppingCartModel, res) {
                 if (products.length < 1) {
                     success.ProductsFounded = false
                     Connection.rollback()
-                    Connection.end()
+                    Connection.destroy()
                     res.json(success)
                 } else {
                     success.ProductsFounded = true
@@ -83,7 +83,7 @@ function insertInstance(shoppingCartModel, res) {
                         if (err || result.affectedRows < 1) {
                             success.ShoppingCartInserted = false
                             Connection.rollback()
-                            Connection.end()
+                            Connection.destroy()
                             res.json(success)
                         } else {
                             success.ShoppingCartInserted = true
@@ -103,13 +103,13 @@ function insertInstance(shoppingCartModel, res) {
                                         if (i == shoppingCartModel.ShoppingCartProducts.length - 1) {
                                             success.Executed = true
                                             Connection.commit()
-                                            Connection.end()
+                                            Connection.destroy()
                                             res.json(success)
                                         }
                                     } else {
                                         success.ShoppingCartProductsInserted = false
                                         Connection.rollback()
-                                        Connection.end()
+                                        Connection.destroy()
                                         res.json(success)
                                     }
                                 })
@@ -120,7 +120,7 @@ function insertInstance(shoppingCartModel, res) {
             })
         } catch (error) {
             Connection.rollback()
-            Connection.end()
+            Connection.destroy()
             res.json(success)
         }
     })
@@ -141,7 +141,7 @@ function updateInstance(shoppingCartModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("UPDATE shoppingarts SET UserId=?, Amount=?, ModificationDate=NOW(), Status=? WHERE ShoppingCartId=?", values, (err, result) => {
-            Connection.end()
+            Connection.destroy()
             res.json(!err && result.affectedRows > 0)
         }
     )

@@ -1,7 +1,7 @@
 import { getUserInstance } from "../models/UserModel.js";
 import { ConnectionStart } from "../DAL/Connection.js";
 
-let Conexion = ConnectionStart()
+let Connection = ConnectionStart()
 let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey FROM users "
 
 //save datos
@@ -32,20 +32,20 @@ export function insertInstance(UserModel, res) {
         Executed: false
     }
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
+    Connection.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
         if (result.length < 1) {
-            Conexion = ConnectionStart()
-            Conexion.query("INSERT INTO users (Name, LastName, Email, Password) VALUES (?,?,?,?)", values, (err, result) => {
+            Connection = ConnectionStart()
+            Connection.query("INSERT INTO users (Name, LastName, Email, Password) VALUES (?,?,?,?)", values, (err, result) => {
                 success.ValidEmail = true
                 success.Executed = (!err && result.affectedRows > 0)
-                Conexion.end()
+                Connection.destroy()
                 res.json(success)
             })
         } else {
             success.ValidEmail = false
-            Conexion.end()
+            Connection.destroy()
             res.json(success)
         }
     })
@@ -68,25 +68,25 @@ export function updateInstance(UserModel, res) {
         Executed: false
     }
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query(SqlQuery + " WHERE UserId = ?", UserModel.UserId, (err, result) => {
+    Connection.query(SqlQuery + " WHERE UserId = ?", UserModel.UserId, (err, result) => {
         if (result.length > 0) {
             if (result[0].Email == UserModel.Email) {
-                Conexion = ConnectionStart()
-                Conexion.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=?, SecretKey=? WHERE UserId = ? ", values, (err, result) => {
+                Connection = ConnectionStart()
+                Connection.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=?, SecretKey=? WHERE UserId = ? ", values, (err, result) => {
                     success.ValidEmail = true
                     success.Executed = (!err && result.affectedRows > 0)
-                    Conexion.end()
+                    Connection.destroy()
                     res.json(success)
                 })
             } else {
-                Conexion = ConnectionStart()
-                Conexion.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
+                Connection = ConnectionStart()
+                Connection.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
                     if (result.length > 0) {
                         success.ValidEmail = false
                     }
-                    Conexion.end()
+                    Connection.destroy()
                     res.json(success)
                 })
             }
@@ -97,9 +97,9 @@ export function updateInstance(UserModel, res) {
 //Read
 export function listInstances(req, res) {
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query(SqlQuery, (err, result) => {
+    Connection.query(SqlQuery, (err, result) => {
 
         let data = []
 
@@ -108,7 +108,7 @@ export function listInstances(req, res) {
             data.push(Object.assign({}, getUserInstance(row)))
         }
 
-        Conexion.end()
+        Connection.destroy()
         res.json(data)
     })
 
@@ -120,10 +120,10 @@ export function findInstance(req, res) {
     const { id } = req.params
     const values = [id]
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query(SqlQuery + " WHERE UserId = ?", values, (err, result) => {
-        Conexion.end()
+    Connection.query(SqlQuery + " WHERE UserId = ?", values, (err, result) => {
+        Connection.destroy()
         res.json(getUserInstance(result[0]))
     })
 
@@ -141,9 +141,9 @@ export function findInstanceByEmail (req, res) {
         Exist: undefined
     }
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query(SqlQuery + " WHERE Email = ?", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE Email = ?", values, (err, result) => {
 
         if (result.length > 0) {
             success.Exist = true
@@ -153,7 +153,7 @@ export function findInstanceByEmail (req, res) {
         } else {
             success.Exist = false
         }
-        Conexion.end()
+        Connection.destroy()
         res.json(success)
     })
 
@@ -169,11 +169,11 @@ export function deleteInstance(req, res) {
         Executed: false
     }
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query("DELETE FROM users WHERE UserId = ? ", values, (err, result) => {
+    Connection.query("DELETE FROM users WHERE UserId = ? ", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        Conexion.end()
+        Connection.destroy()
         res.json(success)
     })
 }
