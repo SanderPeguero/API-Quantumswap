@@ -59,8 +59,9 @@ function insertInstance(shoppingCartModel, res) {
                 
                 if (products.length < 1) {
                     success.ProductsFounded = false
+                    Connection.rollback()
+                    Connection.end()
                     res.json(success)
-                    return Connection.rollback()
                 } else {
                     success.ProductsFounded = true
                     
@@ -81,8 +82,9 @@ function insertInstance(shoppingCartModel, res) {
                     Connection.query("insert into shoppingcarts (UserId, Amount, CreationDate, Status) values (?, ?, NOW(), ?)", values, (err, result) => {
                         if (err || result.affectedRows < 1) {
                             success.ShoppingCartInserted = false
+                            Connection.rollback()
+                            Connection.end()
                             res.json(success)
-                            return Connection.rollback()
                         } else {
                             success.ShoppingCartInserted = true
                             
@@ -100,13 +102,15 @@ function insertInstance(shoppingCartModel, res) {
                                         success.ShoppingCartProductsInserted = true
                                         if (i == shoppingCartModel.ShoppingCartProducts.length - 1) {
                                             success.Executed = true
-                                            res.json(success)
+                                            Connection.commit()
                                             Connection.end()
+                                            res.json(success)
                                         }
                                     } else {
                                         success.ShoppingCartProductsInserted = false
+                                        Connection.rollback()
+                                        Connection.end()
                                         res.json(success)
-                                        return Connection.rollback()
                                     }
                                 })
                             }
@@ -114,13 +118,12 @@ function insertInstance(shoppingCartModel, res) {
                     })
                 }
             })
-            Connection.commit()
         } catch (error) {
+            Connection.rollback()
+            Connection.end()
             res.json(success)
-            return Connection.rollback()
         }
     })
-    Connection.end()
 
 
 }
@@ -137,23 +140,17 @@ function updateInstance(shoppingCartModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("UPDATE shoppingarts SET UserId=?, Amount=?, ModificationDate=NOW(), Status=? WHERE ShoppingCartId=?", values,
-
-        (err, result) => {
+    Connection.query("UPDATE shoppingarts SET UserId=?, Amount=?, ModificationDate=NOW(), Status=? WHERE ShoppingCartId=?", values, (err, result) => {
+            Connection.end()
             res.json(!err && result.affectedRows > 0)
         }
-
     )
-
-    Connection.end()
-
 }
 
 //Mostrar todos los registros
 export function listInstances (req, res) {
 
     Connection = ConnectionStart()
-
     Connection.query(SqlQuery, (err, result) => {
         let data = []
 
@@ -164,14 +161,9 @@ export function listInstances (req, res) {
 
         }
 
-        res.json(data)
         Conexion.end()
-
+        res.json(data)
     })
-
-    // Connection.destroy()
-    Connection.end()
-
 }
 
 //Mostrar un registro
@@ -183,8 +175,8 @@ export function findInstance (req, res) {
     Connection = ConnectionStart()
 
     Connection.query(SqlQuery + " WHERE ShoppingCartId = ? ", values, (err, result) => {
-        res.json(getInstanceShoppingCart(result[0]))
         Conexion.end()
+        res.json(getInstanceShoppingCart(result[0]))
     })
 }
 
@@ -198,8 +190,8 @@ export function deleteInstance (req, res) {
 
     Connection.query("DELETE FROM shoppingarts WHERE ShoppingCartId = ? ", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        res.json(success)
         Conexion.end()
+        res.json(success)
     })
 
 }

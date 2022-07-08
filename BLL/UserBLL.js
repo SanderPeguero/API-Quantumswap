@@ -40,13 +40,13 @@ export function insertInstance(UserModel, res) {
             Conexion.query("INSERT INTO users (Name, LastName, Email, Password) VALUES (?,?,?,?)", values, (err, result) => {
                 success.ValidEmail = true
                 success.Executed = (!err && result.affectedRows > 0)
-                res.json(success)
                 Conexion.end()
+                res.json(success)
             })
         } else {
             success.ValidEmail = false
-            res.json(success)
             Conexion.end()
+            res.json(success)
         }
     })
 }
@@ -77,6 +77,8 @@ export function updateInstance(UserModel, res) {
                 Conexion.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=?, SecretKey=? WHERE UserId = ? ", values, (err, result) => {
                     success.ValidEmail = true
                     success.Executed = (!err && result.affectedRows > 0)
+                    Conexion.end()
+                    res.json(success)
                 })
             } else {
                 Conexion = ConnectionStart()
@@ -84,11 +86,11 @@ export function updateInstance(UserModel, res) {
                     if (result.length > 0) {
                         success.ValidEmail = false
                     }
+                    Conexion.end()
+                    res.json(success)
                 })
             }
         }
-        res.json(success)
-        Conexion.end()
     })
 }
 
@@ -106,8 +108,8 @@ export function listInstances(req, res) {
             data.push(Object.assign({}, getUserInstance(row)))
         }
 
-        res.json(data)
         Conexion.end()
+        res.json(data)
     })
 
 
@@ -121,8 +123,8 @@ export function findInstance(req, res) {
     Conexion = ConnectionStart()
 
     Conexion.query(SqlQuery + " WHERE UserId = ?", values, (err, result) => {
-        res.json(getUserInstance(result[0]))
         Conexion.end()
+        res.json(getUserInstance(result[0]))
     })
 
 }
@@ -151,8 +153,8 @@ export function findInstanceByEmail (req, res) {
         } else {
             success.Exist = false
         }
-        res.json(success)
         Conexion.end()
+        res.json(success)
     })
 
 }
@@ -171,7 +173,7 @@ export function deleteInstance(req, res) {
 
     Conexion.query("DELETE FROM users WHERE UserId = ? ", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        res.json(success)
         Conexion.end()
+        res.json(success)
     })
 }

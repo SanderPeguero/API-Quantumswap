@@ -44,8 +44,8 @@ function insertInstance(productModel, res) {
 
     Connection.query("INSERT INTO products (Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        res.json(success)
         Connection.end()
+        res.json(success)
     })
 
 }
@@ -74,8 +74,8 @@ function updateInstance(productModel, res) {
 
     Connection.query("UPDATE products SET Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, CreationDate=?, ModificationDate=?, Status=? WHERE ProductId=?", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        res.json(success)
         Connection.end()
+        res.json(success)
     })
 
 
@@ -95,8 +95,8 @@ export function listInstances (req, res) {
             data.push(Object.assign({}, getInstanceProduct(fila)))
         }
 
-        res.json(data)
         Connection.end()
+        res.json(data)
     })
 }
 
@@ -109,8 +109,8 @@ export function findInstance (req, res) {
     Connection = ConnectionStart()
 
     Connection.query(SqlQuery + " WHERE ProductId = ? ", values, (err, result) => {
-        res.json(getInstanceProduct(result[0]))
         Connection.end()
+        res.json(getInstanceProduct(result[0]))
     })
 
 }
@@ -129,7 +129,7 @@ export function deleteInstance (req, res) {
 
     Connection.query("DELETE FROM products WHERE ProductId = ? ", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
-        res.json(success)
         Connection.end()
+        res.json(success)
     })
 }
