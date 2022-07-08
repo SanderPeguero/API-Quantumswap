@@ -24,6 +24,8 @@ export function saveInstance (req, res) {
 //Crear un registro
 function insertInstance(productModel, res) {
 
+    var date = new Date();
+
     const values = [
         productModel.Description,
         productModel.Stock,
@@ -31,7 +33,7 @@ function insertInstance(productModel, res) {
         productModel.Price,
         productModel.Discount,
         productModel.Image,
-        productModel.CreationDate,
+        productModel.CreationDate = date.toISOString().slice(0, 19).replace('T', ' '),
         productModel.Status = 1
     ]
 
@@ -46,11 +48,13 @@ function insertInstance(productModel, res) {
         Connection.destroy()
         res.json(success)
     })
-
+    
 }
 
 //Actualizar un registro
 function updateInstance(productModel, res) {
+
+    var date = new Date();
 
     const values = [
         productModel.Description,
@@ -59,7 +63,7 @@ function updateInstance(productModel, res) {
         productModel.Price,
         productModel.Discount,
         productModel.Image,
-        productModel.ModificationDate,
+        productModel.ModificationDate = date.toISOString().slice(0, 19).replace('T', ' '),
         productModel.Status,
         productModel.ProductId
     ]
