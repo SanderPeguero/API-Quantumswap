@@ -32,8 +32,7 @@ function insertInstance(productModel, res) {
         productModel.Discount,
         productModel.Image,
         productModel.CreationDate,
-        productModel.ModificationDate,
-        productModel.Status
+        productModel.Status = 1
     ]
 
     const success = {
@@ -42,7 +41,7 @@ function insertInstance(productModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("INSERT INTO products (Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
+    Connection.query("INSERT INTO products (Description, Stock, Cost, Price, Discount, Image, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
         Connection.destroy()
         res.json(success)
@@ -60,7 +59,6 @@ function updateInstance(productModel, res) {
         productModel.Price,
         productModel.Discount,
         productModel.Image,
-        productModel.CreationDate,
         productModel.ModificationDate,
         productModel.Status,
         productModel.ProductId
@@ -72,7 +70,7 @@ function updateInstance(productModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("UPDATE products SET Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, CreationDate=?, ModificationDate=?, Status=? WHERE ProductId=?", values, (err, result) => {
+    Connection.query("UPDATE products SET Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, ModificationDate=?, Status=? WHERE ProductId=?", values, (err, result) => {
         success.Executed = (!err && result.affectedRows > 0)
         Connection.destroy()
         res.json(success)
