@@ -1,8 +1,9 @@
 import { getUserInstance } from "../Models/UserModel.js";
 import { ConnectionStart } from "../DAL/Connection.js"; 
+import CryptoJS from 'crypto-js';
 
 let Connection = ConnectionStart()
-let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey FROM users "
+let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey, CreationDate, ModificationDate, Status FROM users "
 
 //save datos
 export function saveInstance (req, res) {
@@ -18,13 +19,18 @@ export function saveInstance (req, res) {
 }
 
 //Insert
-export function insertInstance(UserModel, res) {
+export function insertInstance(userModel, res) {
+
+    var date = new Date();
 
     const values = [
-        UserModel.Name,
-        UserModel.LastName,
-        UserModel.Email,
-        UserModel.Password
+        userModel.Name,
+        userModel.LastName,
+        userModel.Email,
+        userModel.Password,
+        userModel.SecretKey,
+        userModel.CreationDate = date.toISOString().slice(0, 19).replace('T', ' '),
+        userModel.Status = 1
     ]
 
     const success = {
@@ -34,10 +40,10 @@ export function insertInstance(UserModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
+    Connection.query(SqlQuery + " WHERE Email = ?", userModel.Email, (err, result) => {
         if (result.length < 1) {
             Connection = ConnectionStart()
-            Connection.query("INSERT INTO users (Name, LastName, Email, Password) VALUES (?,?,?,?)", values, (err, result) => {
+            Connection.query("INSERT INTO users (Name, LastName, Email, Password, SecretKey, CreationDate, Status) VALUES (?,?,?,PASSWORD(?),?,?,?)", values, (err, result) => {
                 success.ValidEmail = true
                 success.Executed = (!err && result.affectedRows > 0)
                 Connection.destroy()
@@ -52,15 +58,19 @@ export function insertInstance(UserModel, res) {
 }
 
 //Update
-export function updateInstance(UserModel, res) {
+export function updateInstance(userModel, res) {
+
+    var date = new Date();
 
     const values = [
-        UserModel.Name,
-        UserModel.LastName,
-        UserModel.Email,
-        UserModel.Password,
-        UserModel.SecretKey,
-        UserModel.UserId
+        userModel.Name,
+        userModel.LastName,
+        userModel.Email,
+        userModel.Password,
+        userModel.SecretKey,
+        userModel.ModificationDate = date.toISOString().slice(0, 19).replace('T', ' '),
+        userModel.Status,
+        userModel.UserId
     ]
 
     const success = {
@@ -70,11 +80,11 @@ export function updateInstance(UserModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE UserId = ?", UserModel.UserId, (err, result) => {
+    Connection.query(SqlQuery + " WHERE UserId = ?", userModel.UserId, (err, result) => {
         if (result.length > 0) {
-            if (result[0].Email == UserModel.Email) {
+            if (result[0].Email == userModel.Email) {
                 Connection = ConnectionStart()
-                Connection.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=?, SecretKey=? WHERE UserId = ? ", values, (err, result) => {
+                Connection.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=PASSWORD(?), SecretKey=?, ModificationDate=?, Status=? WHERE UserId = ? ", values, (err, result) => {
                     success.ValidEmail = true
                     success.Executed = (!err && result.affectedRows > 0)
                     Connection.destroy()
@@ -82,7 +92,7 @@ export function updateInstance(UserModel, res) {
                 })
             } else {
                 Connection = ConnectionStart()
-                Connection.query(SqlQuery + " WHERE Email = ?", UserModel.Email, (err, result) => {
+                Connection.query(SqlQuery + " WHERE Email = ?", userModel.Email, (err, result) => {
                     if (result.length > 0) {
                         success.ValidEmail = false
                     }
@@ -147,7 +157,7 @@ export function findInstanceByEmail (req, res) {
 
         if (result.length > 0) {
             success.Exist = true
-            if (result[0].Password == Password) {
+            if (result[0].Password == ("*"+CryptoJS.SHA1(CryptoJS.SHA1(Password))).toUpperCase()) {
                 success.User = getUserInstance(result[0])
             }
         } else {

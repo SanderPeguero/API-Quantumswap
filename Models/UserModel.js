@@ -5,7 +5,10 @@ const UserModel = {
     LastName: "",
     Email: "",
     Password: "",
-    SecretKey: ""
+    SecretKey: "",
+    CreationDate: "",
+    ModificationDate: "",
+    Status: 0
 }
 
 export function getUserInstance(row = null) {
@@ -19,6 +22,9 @@ export function getUserInstance(row = null) {
     UserModel.Email = row.Email || ""
     UserModel.Password = row.Password || ""
     UserModel.SecretKey = row.SecretKey || ""
+    UserModel.CreationDate = row.CreationDate || ""
+    UserModel.ModificationDate = row.ModificationDate || ""
+    UserModel.Status = row.Status || 0
 
     return UserModel
 }
