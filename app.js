@@ -8,6 +8,7 @@ import OfferRoutes from './Routes/OfferRoutes.js'
 import OfferTypeRoutes from './Routes/OfferTypeRoutes.js'
 import SectionRoutes from './Routes/SectionRoutes.js'
 import CategoryRoutes from './Routes/CategoryRoutes.js'
+import StatusRoutes from './Routes/StatusRoutes.js'
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use('/offers', OfferRoutes)
 app.use('/offertypes', OfferTypeRoutes)
 app.use('/sections', SectionRoutes)
 app.use('/categories', CategoryRoutes)
+app.use('/statuses', StatusRoutes)
 
 app.get('/', (req, res) => {
     res.send('Welcome to the QuantumSwap API!')
