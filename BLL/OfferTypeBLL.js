@@ -37,9 +37,15 @@ function insertInstance(offerTypeModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("INSERT INTO offertypes (Description) VALUES (?)", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
     
 }
@@ -61,9 +67,15 @@ function updateInstance(offerTypeModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("UPDATE offertypes SET Description=? WHERE OfferTypeId=?", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 
 
@@ -78,13 +90,19 @@ export function listInstances (req, res) {
 
         let data = []
 
-        for (let i = 0; i < result.length; i++) {
-            let fila = result[i];
-            data.push(Object.assign({}, getInstanceOfferType(fila)))
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceOfferType(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
         }
 
-        Connection.destroy()
-        res.json(data)
     })
 }
 
@@ -116,8 +134,14 @@ export function deleteInstance (req, res) {
     Connection = ConnectionStart()
 
     Connection.query("DELETE FROM offertypes WHERE OfferTypeId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 }

@@ -1,6 +1,10 @@
 
 const ProductModel = {
     ProductId: 0,
+    CategoryId: 0,
+    SectionId: 0,
+    CategoryDescription: "",
+    SectionDescription: "",
     Description: "",
     Stock: 0,
     Cost: 0,
@@ -19,6 +23,10 @@ export function getInstanceProduct(row = null) {
     }
 
     ProductModel.ProductId = row.ProductId || 0
+    ProductModel.CategoryId = row.CategoryId || 0
+    ProductModel.SectionId = row.SectionId || 0
+    ProductModel.CategoryDescription = row.CategoryDescription || ""
+    ProductModel.SectionDescription = row.SectionDescription || ""
     ProductModel.Description = row.Description || ""
     ProductModel.Stock = row.Stock || 0
     ProductModel.Cost = row.Cost || 0

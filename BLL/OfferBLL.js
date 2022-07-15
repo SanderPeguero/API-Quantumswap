@@ -4,7 +4,19 @@ import { getInstanceOffer } from "../Models/OfferModel.js"
 import { ConnectionStart } from "../DAL/Connection.js"
 
 let Connection = ConnectionStart()
-let SqlQuery = "SELECT OfferId, OfferTypeId, EntityId, Discount, StartDate, EndingDate, CreationDate, ModificationDate, Status FROM offers "
+let SqlQuery = "SELECT " +
+"offers.OfferId, " +
+"offers.OfferTypeId, " +
+"offertypes.`Description` AS OfferTypeDescription, " +
+"offers.EntityId, " +
+"offers.Discount, " +
+"offers.StartDate, " +
+"offers.EndingDate, " +
+"offers.CreationDate, " +
+"offers.ModificationDate, " +
+"offers.Status " +
+"FROM offers " +
+"LEFT JOIN offertypes ON offertypes.`OfferTypeId` = offers.`OfferTypeId`"
 
 //** Métodos para el CRUD **/
 
@@ -43,9 +55,15 @@ function insertInstance(offerModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("INSERT INTO offers (OfferTypeId, EntityId, Discount, StartDate, EndingDate, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
     
 }
@@ -73,9 +91,15 @@ function updateInstance(offerModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("UPDATE offers SET OfferTypeId=?, EntityId=?, Discount=?, StartDate=?, EndingDate=?, ModificationDate=?, Status=? WHERE OfferId=?", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 
 
@@ -87,22 +111,29 @@ export function listInstances (req, res) {
     var date = new Date();
 
     const values = [
-        date.toISOString().slice(0, 19).replace('T', ' ')
+        date.toISOString().slice(0, 19).replace('T', ' '),
+        1
     ]
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE EndingDate <= ?", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE offers.EndingDate <= ? AND offers.Status = ? ", values, (err, result) => {
 
         let data = []
 
-        for (let i = 0; i < result.length; i++) {
-            let fila = result[i];
-            data.push(Object.assign({}, getInstanceOffer(fila)))
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceOffer(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
         }
 
-        Connection.destroy()
-        res.json(data)
     })
 }
 
@@ -110,11 +141,11 @@ export function listInstances (req, res) {
 export function findInstance (req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [id, 1]
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE OfferId = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE OfferId = ? AND Status = ? ", values, (err, result) => {
         Connection.destroy()
         res.json(getInstanceOffer(result[0]))
     })
@@ -125,7 +156,7 @@ export function findInstance (req, res) {
 export function deleteInstance (req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [2, id]
 
     const success = {
         Executed: false
@@ -133,9 +164,15 @@ export function deleteInstance (req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("DELETE FROM offers WHERE OfferId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+    Connection.query("UPDATE offers SET Status=? WHERE OfferId = ? ", values, (err, result) => {
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 }

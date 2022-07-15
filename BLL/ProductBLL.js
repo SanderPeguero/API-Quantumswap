@@ -4,7 +4,25 @@ import { getInstanceProduct } from "../Models/ProductModel.js"
 import { ConnectionStart } from "../DAL/Connection.js"
 
 let Connection = ConnectionStart()
-let SqlQuery = "SELECT ProductId, Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status FROM products "
+let SqlQuery = "SELECT " +
+"products.ProductId, " +
+"products.CategoryId, " +
+"sections.`SectionId`, " +
+"categories.`Description` AS CategoryDescription, " +
+"sections.`Description` AS SectionDescription, " +
+"products.Description, " +
+"products.Stock, " +
+"products.Cost, " +
+"products.Price, " +
+"products.Discount, " +
+"products.Image, " +
+"products.CreationDate, " +
+"products.ModificationDate, " +
+"products.Status " +
+"FROM products " +
+"LEFT JOIN categories ON categories.`CategoryId` = products.`CategoryId` " +
+"LEFT JOIN sections ON categories.`CategoryID` = products.`CategoryID` "
+let SqlQueryOffer = "SELECT OfferId, OfferTypeId, EntityId, Discount, StartDate, EndingDate, CreationDate, ModificationDate, Status FROM offers "
 
 //** Métodos para el CRUD **/
 
@@ -27,6 +45,7 @@ function insertInstance(productModel, res) {
     var date = new Date();
 
     const values = [
+        productModel.CategoryId,
         productModel.Description,
         productModel.Stock,
         productModel.Cost,
@@ -43,10 +62,16 @@ function insertInstance(productModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("INSERT INTO products (Description, Stock, Cost, Price, Discount, Image, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+    Connection.query("INSERT INTO products (CategoryId, Description, Stock, Cost, Price, Discount, Image, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
     
 }
@@ -57,6 +82,7 @@ function updateInstance(productModel, res) {
     var date = new Date();
 
     const values = [
+        productModel.CategoryId,
         productModel.Description,
         productModel.Stock,
         productModel.Cost,
@@ -74,10 +100,16 @@ function updateInstance(productModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("UPDATE products SET Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, ModificationDate=?, Status=? WHERE ProductId=?", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+    Connection.query("UPDATE products SET CategoryId=?, Description=?, Stock=?, Cost=?, Price=?, Discount=?, Image=?, ModificationDate=?, Status=? WHERE ProductId=?", values, (err, result) => {
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 
 
@@ -86,19 +118,30 @@ function updateInstance(productModel, res) {
 //Mostrar todos los registros
 export function listInstances (req, res) {
 
+    const values = [
+        1
+    ]
+
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery, (err, result) => {
+    Connection.query(SqlQuery + " WHERE products.Status = ? ", values, (err, result) => {
 
         let data = []
+        let vav = [2, 1]
 
-        for (let i = 0; i < result.length; i++) {
-            let fila = result[i];
-            data.push(Object.assign({}, getInstanceProduct(fila)))
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceProduct(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
         }
 
-        Connection.destroy()
-        res.json(data)
     })
 }
 
@@ -106,11 +149,11 @@ export function listInstances (req, res) {
 export function findInstance (req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [id, 1]
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE ProductId = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE ProductId = ? AND Status = ? ", values, (err, result) => {
         Connection.destroy()
         res.json(getInstanceProduct(result[0]))
     })
@@ -121,7 +164,7 @@ export function findInstance (req, res) {
 export function deleteInstance (req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [2, id]
 
     const success = {
         Executed: false
@@ -129,9 +172,15 @@ export function deleteInstance (req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("DELETE FROM products WHERE ProductId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+    Connection.query("UPDATE products SET Status=? WHERE ProductId = ? ", values, (err, result) => {
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 }

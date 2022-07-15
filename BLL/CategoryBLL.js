@@ -38,9 +38,15 @@ function insertInstance(categoryModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("INSERT INTO categories (SectionId, Description) VALUES (?,?)", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
     
 }
@@ -63,9 +69,15 @@ function updateInstance(categoryModel, res) {
     Connection = ConnectionStart()
 
     Connection.query("UPDATE categories SET SectionId=?, Description=? WHERE CategoryId=?", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 
 
@@ -80,24 +92,30 @@ export function listInstances (req, res) {
 
         let data = []
 
-        for (let i = 0; i < result.length; i++) {
-            let fila = result[i];
-            data.push(Object.assign({}, getInstanceCategory(fila)))
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceCategory(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
         }
 
-        Connection.destroy()
-        res.json(data)
     })
 }
 
 //Mostrar un registro
 export function findInstance (req, res) {
-
+    
     const { id } = req.params
     const values = [id]
-
+    
     Connection = ConnectionStart()
-
+    
     Connection.query(SqlQuery + " WHERE CategoryId = ? ", values, (err, result) => {
         Connection.destroy()
         res.json(getInstanceCategory(result[0]))
@@ -118,8 +136,14 @@ export function deleteInstance (req, res) {
     Connection = ConnectionStart()
 
     Connection.query("DELETE FROM categories WHERE CategoryId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 }

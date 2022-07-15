@@ -11,7 +11,7 @@ const UserModel = {
     Status: 0
 }
 
-export function getUserInstance(row = null) {
+export function getInstanceUser(row = null) {
     if (row == null) {
         return UserModel
     }

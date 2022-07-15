@@ -1,4 +1,4 @@
-import { getUserInstance } from "../Models/UserModel.js";
+import { getInstanceUser } from "../Models/UserModel.js";
 import { ConnectionStart } from "../DAL/Connection.js"; 
 import CryptoJS from 'crypto-js';
 
@@ -8,7 +8,7 @@ let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey, Creat
 //save datos
 export function saveInstance (req, res) {
 
-    const UserModel = getUserInstance(req.body)
+    const UserModel = getInstanceUser(req.body)
 
     if (UserModel.UserId == null || UserModel.UserId == 0) {
         insertInstance(UserModel, res)
@@ -107,19 +107,28 @@ export function updateInstance(userModel, res) {
 //Read
 export function listInstances(req, res) {
 
+    const values = [
+        1
+    ]
+
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery, (err, result) => {
+    Connection.query(SqlQuery + " WHERE Status = ? ", values, (err, result) => {
 
         let data = []
 
-        for (let s = 0; s < result.length; s++) {
-            let row = result[s]
-            data.push(Object.assign({}, getUserInstance(row)))
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceUser(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
         }
-
-        Connection.destroy()
-        res.json(data)
     })
 
 
@@ -128,13 +137,13 @@ export function listInstances(req, res) {
 export function findInstance(req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [id, 1]
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE UserId = ?", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE UserId = ? AND Status = ? ", values, (err, result) => {
         Connection.destroy()
-        res.json(getUserInstance(result[0]))
+        res.json(getInstanceUser(result[0]))
     })
 
 }
@@ -144,7 +153,7 @@ export function findInstance(req, res) {
 export function findInstanceByEmail (req, res) {
 
     const { Email, Password } = req.body
-    const values = [Email]
+    const values = [Email, 1]
 
     const success = {
         User: undefined,
@@ -153,12 +162,12 @@ export function findInstanceByEmail (req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE Email = ?", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE Email = ? AND Status = ? ", values, (err, result) => {
 
         if (result.length > 0) {
             success.Exist = true
             if (result[0].Password == ("*"+CryptoJS.SHA1(CryptoJS.SHA1(Password))).toUpperCase()) {
-                success.User = getUserInstance(result[0])
+                success.User = getInstanceUser(result[0])
             }
         } else {
             success.Exist = false
@@ -173,7 +182,7 @@ export function findInstanceByEmail (req, res) {
 export function deleteInstance(req, res) {
 
     const { id } = req.params
-    const values = [id]
+    const values = [2, id]
 
     const success = {
         Executed: false
@@ -181,9 +190,15 @@ export function deleteInstance(req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("DELETE FROM users WHERE UserId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.destroy()
-        res.json(success)
+    Connection.query("UPDATE users SET Status=? WHERE UserId = ? ", values, (err, result) => {
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = true
+            Connection.destroy()
+            res.status(500).json(success)
+        }
     })
 }

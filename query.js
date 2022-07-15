@@ -1,12 +1,12 @@
 import { ConnectionStart } from "./DAL/Connection.js";
 
-let Conexion = ConnectionStart()
+let Connection = ConnectionStart()
 
 function query(res) {
 
-    Conexion = ConnectionStart()
+    Connection = ConnectionStart()
 
-    Conexion.query("ALTER TABLE usuarios ADD SecretKey VARCHAR(56)",
+    Connection.query("ALTER TABLE usuarios ADD SecretKey VARCHAR(56)",
 
         (err, result) => {
 
@@ -16,7 +16,7 @@ function query(res) {
 
     )
 
-    Conexion.end()
+    Connection.end()
 
 }
 
