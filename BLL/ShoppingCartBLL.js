@@ -89,6 +89,9 @@ function insertInstance(shoppingCartModel, res) {
                                     success.ShoppingCartInserted = false
                                     Connection.rollback()
                                     Connection.destroy()
+                                    if (err) {
+                                        console.log(err)
+                                    }
                                     res.json(success)
                                 } else {
                                     success.ShoppingCartInserted = true
@@ -115,6 +118,9 @@ function insertInstance(shoppingCartModel, res) {
                                                 success.ShoppingCartProductsInserted = false
                                                 Connection.rollback()
                                                 Connection.destroy()
+                                                if (err) {
+                                                    console.log(err)
+                                                }
                                                 res.json(success)
                                             }
                                         })
