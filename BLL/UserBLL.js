@@ -1,12 +1,12 @@
 import { getInstanceUser } from "../Models/UserModel.js";
-import { ConnectionStart } from "../DAL/Connection.js"; 
+import { ConnectionStart } from "../DAL/Connection.js";
 import CryptoJS from 'crypto-js';
 
 let Connection = ConnectionStart()
 let SqlQuery = "SELECT UserId, Name, LastName, Email, Password, SecretKey, CreationDate, ModificationDate, Status FROM users "
 
 //save datos
-export function saveInstance (req, res) {
+export function saveInstance(req, res) {
 
     const UserModel = getInstanceUser(req.body)
 
@@ -150,7 +150,7 @@ export function findInstance(req, res) {
 
 
 //Login
-export function findInstanceByEmail (req, res) {
+export function findInstanceByEmail(req, res) {
 
     const { Email, Password } = req.body
     const values = [Email, 1]
@@ -166,7 +166,7 @@ export function findInstanceByEmail (req, res) {
 
         if (result.length > 0) {
             success.Exist = true
-            if (result[0].Password == ("*"+CryptoJS.SHA1(CryptoJS.SHA1(Password))).toUpperCase()) {
+            if (result[0].Password == ("*" + CryptoJS.SHA1(CryptoJS.SHA1(Password))).toUpperCase()) {
                 success.User = getInstanceUser(result[0])
             }
         } else {

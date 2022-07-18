@@ -5,23 +5,23 @@ import { ConnectionStart } from "../DAL/Connection.js"
 
 let Connection = ConnectionStart()
 let SqlQuery = "SELECT " +
-"offers.OfferId, " +
-"offers.OfferTypeId, " +
-"offertypes.`Description` AS OfferTypeDescription, " +
-"offers.EntityId, " +
-"offers.Discount, " +
-"offers.StartDate, " +
-"offers.EndingDate, " +
-"offers.CreationDate, " +
-"offers.ModificationDate, " +
-"offers.Status " +
-"FROM offers " +
-"LEFT JOIN offertypes ON offertypes.`OfferTypeId` = offers.`OfferTypeId`"
+    "offers.OfferId, " +
+    "offers.OfferTypeId, " +
+    "offertypes.`Description` AS OfferTypeDescription, " +
+    "offers.EntityId, " +
+    "offers.Discount, " +
+    "offers.StartDate, " +
+    "offers.EndingDate, " +
+    "offers.CreationDate, " +
+    "offers.ModificationDate, " +
+    "offers.Status " +
+    "FROM offers " +
+    "LEFT JOIN offertypes ON offertypes.`OfferTypeId` = offers.`OfferTypeId`"
 
 //** Métodos para el CRUD **/
 
 //save datos
-export function saveInstance (req, res) {
+export function saveInstance(req, res) {
 
     const OfferModel = getInstanceOffer(req.body)
 
@@ -65,7 +65,7 @@ function insertInstance(offerModel, res) {
             res.status(500).json(success)
         }
     })
-    
+
 }
 
 //Actualizar un registro
@@ -106,7 +106,7 @@ function updateInstance(offerModel, res) {
 }
 
 //Mostrar todos los registros
-export function listInstances (req, res) {
+export function listInstances(req, res) {
 
     var date = new Date();
 
@@ -138,7 +138,7 @@ export function listInstances (req, res) {
 }
 
 //Mostrar un registro
-export function findInstance (req, res) {
+export function findInstance(req, res) {
 
     const { id } = req.params
     const values = [id, 1]
@@ -153,7 +153,7 @@ export function findInstance (req, res) {
 }
 
 //delete un registro
-export function deleteInstance (req, res) {
+export function deleteInstance(req, res) {
 
     const { id } = req.params
     const values = [2, id]

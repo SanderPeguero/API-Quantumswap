@@ -1,24 +1,58 @@
 //importamos el Modelo
-import { getInstanceShoppingCart } from "../Models/ShoppingCartModel.js"
-import { getInstanceProduct } from "../Models/ProductModel.js"
+import ShoppingCartModel from "../models/ShoppingCartModel.js"
+import ProductModel from "../models/ProductModel.js"
 //importamos la Connection
-import { ConnectionStart } from "../DAL/Connection.js"
+import { ConnectionRestart } from "../Connection/Connection.js"
 
-let Connection = ConnectionStart()
+let Connection = ConnectionRestart()
 let SqlQuery = "SELECT ShoppingCartId, UserId, Amount, CreationDate, ModificationDate, Status FROM shoppingcarts "
-let SqlQueryProducts = "SELECT ProductId, Description, Stock, Cost, Price, Discount, Image, CreationDate, ModificationDate, Status FROM products "
 
 //** Métodos para el CRUD **/
 
-//save datos
-export function saveInstance (req, res) {
+//obtiene una instancia de un modelo a partir de un registro de una tabla de base de datos
+function getInstance(row = null) {
+    if (row == null) {
+        return ShoppingCartModel
+    }
 
-    const ShoppingCartModel = getInstanceShoppingCart(req.body)
+    ShoppingCartModel.ShoppingCartId = row.ShoppingCartId || 0,
+        ShoppingCartModel.UserId = row.UserId || 0,
+        ShoppingCartModel.Amount = row.Amount || 0,
+        ShoppingCartModel.CreationDate = row.CreationDate || "",
+        ShoppingCartModel.ModificationDate = row.ModificationDate || "",
+        ShoppingCartModel.Status = row.Status || 0,
+        ShoppingCartModel.ShoppingCartProducts = row.ShoppingCartProducts || []
+
+    return ShoppingCartModel
+}
+
+function getInstanceProduct(row = null) {
+    if (row == null) {
+        return ProductModel
+    }
+
+    ProductModel.ProductId = row.ProductId || 0
+    ProductModel.Stock = row.Stock || 0
+    ProductModel.Price = row.Price || 0
+    ProductModel.Discount = row.Discount || 0
+    ProductModel.Status = row.Status || 0
+
+    return ProductModel
+}
+
+//save datos
+export const saveInstance = async (req, res) => {
+
+    const ShoppingCartModel = req.body
 
     if (ShoppingCartModel.ShoppingCartId == null || ShoppingCartModel.ShoppingCartId == 0) {
+
         insertInstance(ShoppingCartModel, res)
+
     } else {
+
         updateInstance(ShoppingCartModel, res)
+
     }
 
 }
@@ -26,121 +60,89 @@ export function saveInstance (req, res) {
 //Crear un registro
 function insertInstance(shoppingCartModel, res) {
 
-    var date = new Date();
-
-    let queryConcat = " WHERE ProductId IN ("
+    let SqlQueryProducts = "SELECT ProductId, Stock, Price, Discount, Status FROM products WHERE ProductId IN ("
     for (let i = 0; i < shoppingCartModel.ShoppingCartProducts.length; i++) {
         const product = shoppingCartModel.ShoppingCartProducts[i];
-        queryConcat += product.ProductId
+        SqlQueryProducts += product.ProductId
 
         if (i < shoppingCartModel.ShoppingCartProducts.length - 1) {
-            queryConcat += ", "
+            SqlQueryProducts += ", "
         }
 
     }
-    queryConcat += ") "
+    SqlQueryProducts += ")"
 
-    const success = {
-        ProductsFounded: undefined,
-        ShoppingCartInserted: undefined,
-        ShoppingCartProductsInserted: undefined,
-        Executed: false
-    }
-
-    Connection = ConnectionStart()
+    Connection = ConnectionRestart()
     Connection.beginTransaction(function (err) {
-        if (!err) {
-            try {
-                const val = [1]
-                let products = []
-                Connection = ConnectionStart()
-                Connection.query(SqlQueryProducts + queryConcat + " AND Status = ? ", val, (err, result) => {
-                    if (!err) {
-                        for (let i = 0; i < result.length; i++) {
-                            let fila = result[i];
-                            products.push(Object.assign({}, getInstanceProduct(fila)))
-                        }
-                        
-                        if (products.length < 1) {
-                            success.ProductsFounded = false
-                            Connection.rollback()
-                            Connection.destroy()
-                            res.json(success)
-                        } else {
-                            success.ProductsFounded = true
-                            
-                            shoppingCartModel.Amount = 0
-                            for (let i = 0; i < products.length; i++) {
-                                const product = products[i];
-                                shoppingCartModel.Amount += (product.Price - ((product.Discount / 100) * product.Price)) * shoppingCartModel.ShoppingCartProducts[i].Quantity;
-                            }
-                            
-                            let values = [
-                                shoppingCartModel.UserId,
-                                shoppingCartModel.Amount,
-                                shoppingCartModel.CreationDate = date.toISOString().slice(0, 19).replace('T', ' '),
-                                shoppingCartModel.Status = 1
-                            ]
-                            
-                            Connection = ConnectionStart()
-                            
-                            Connection.query("insert into shoppingcarts (UserId, Amount, CreationDate, Status) values (?, ?, ?, ?)", values, (err, result) => {
-                                if (err || result.affectedRows < 1) {
-                                    success.ShoppingCartInserted = false
-                                    Connection.rollback()
-                                    Connection.destroy()
-                                    if (err) {
-                                        console.log(err)
-                                    }
-                                    res.json(success)
-                                } else {
-                                    success.ShoppingCartInserted = true
-                                    
-                                    for (let i = 0; i < shoppingCartModel.ShoppingCartProducts.length; i++) {
-                                        const product = shoppingCartModel.ShoppingCartProducts[i];
-                                        
-                                        values = [
-                                            result.insertId,
-                                            product.Quantity,
-                                            product.ProductId = 1
-                                        ]
-                                        
-                                        Connection.query("insert into shoppingcartproducts (ShoppingCartId, ProductId, Quantity) values (?, ?, ?)", values, (err, result) => {
-                                            if (!err && result.affectedRows > 0) {
-                                                success.ShoppingCartProductsInserted = true
-                                                if (i == shoppingCartModel.ShoppingCartProducts.length - 1) {
-                                                    success.Executed = true
-                                                    Connection.commit()
-                                                    Connection.destroy()
-                                                    res.json(success)
-                                                }
-                                            } else {
-                                                success.ShoppingCartProductsInserted = false
-                                                Connection.rollback()
-                                                Connection.destroy()
-                                                if (err) {
-                                                    console.log(err)
-                                                }
-                                                res.json(success)
-                                            }
-                                        })
-                                    }
-                                }
-                            })
-                        }
+
+        try {
+            let products = []
+            Connection.query(SqlQueryProducts, (err, result) => {
+
+                console.log(err)
+                for (let i = 0; i < result.length; i++) {
+                    let fila = result[i];
+                    products.push(Object.assign({}, getInstanceProduct(fila)))
+                }
+
+                if (products.length < 1) {
+                    console.log("No se encontraron productos")
+                    return Connection.rollback()
+                } else {
+
+                    shoppingCartModel.Amount = 0
+                    for (let i = 0; i < products.length; i++) {
+                        const product = products[i];
+                        shoppingCartModel.Amount += product.Price * shoppingCartModel.ShoppingCartProducts[i].Quantity;
                     }
-                })
-            } catch (error) {
-                Connection.rollback()
-                Connection.destroy()
-                res.status(500).json(success)
-            }
-        } else {
-            success.Executed = false
-            Connection.destroy()
-            res.status(500).json(success)
+
+                    let values = [
+                        shoppingCartModel.UserId,
+                        shoppingCartModel.Amount,
+                        shoppingCartModel.Status = 1
+                    ]
+
+                    Connection = ConnectionRestart()
+
+                    let query = Connection.query("insert into shoppingcarts (UserId, Amount, CreationDate, Status) values (?, ?, NOW(), ?)", values,
+                        (err, result) => {
+                            if (err || result.affectedRows < 1) {
+                                console.log("No se pudo insertar el carrito")
+                                return Connection.rollback()
+                            } else {
+                                shoppingCartModel.ShoppingCartProducts.forEach(product => {
+
+                                    values = [
+                                        result.insertId,
+                                        product.Quantity,
+                                        product.ProductId = 1
+                                    ]
+
+                                    let query = Connection.query("insert into shoppingcartproducts (ShoppingCartId, ProductId, Quantity) values (?, ?, ?)", values,
+                                        (err, result) => {
+                                            if (err || result.affectedRows < 1) {
+                                                console.log("No se pudo insertar el carrito con productos")
+                                            } else {
+                                                console.log("Carrito insertado")
+                                                return Connection.rollback()
+                                            }
+                                        }
+
+                                    )
+                                });
+                            }
+                        }
+
+                    )
+                }
+
+            })
+            Connection.commit()
+        } catch (error) {
+            return Connection.rollback()
         }
     })
+    Connection.end()
 
 
 }
@@ -155,79 +157,88 @@ function updateInstance(shoppingCartModel, res) {
         shoppingCartModel.ShoppingCartId
     ]
 
-    const success = {
-        Executed: false
-    }
+    Connection = ConnectionRestart()
 
-    Connection = ConnectionStart()
+    Connection.query("UPDATE shoppingarts SET UserId=?, Amount=?, ModificationDate=NOW(), Status=? WHERE ShoppingCartId=?", values,
 
-    Connection.query("UPDATE shoppingarts SET UserId=?, Amount=?, ModificationDate=NOW(), Status=? WHERE ShoppingCartId=?", values, (err, result) => {
-            if (!err){
-                success.Executed = true
-                Connection.destroy()
-                res.json(success)
-            } else {
-                success.Executed = false
-                Connection.destroy()
-                res.status(500).json(success)
-            }
+        (err, result) => {
+            res.json(!err && result.affectedRows > 0)
         }
+
     )
+
+    Connection.end()
+
 }
 
 //Mostrar todos los registros
-export function listInstances (req, res) {
+export const listInstances = (req, res) => {
 
-    const values = [
-        1
-    ]
+    Connection = ConnectionRestart()
 
-    Connection = ConnectionStart()
-    Connection.query(SqlQuery + " WHERE Status = ? ", values, (err, result) => {
+    Connection.query(SqlQuery, (err, result) => {
         let data = []
 
-        if (!err) {
-            for (let i = 0; i < result.length; i++) {
-                let fila = result[i];
-                data.push(Object.assign({}, getInstanceShoppingCart(fila)))
-            }
-            Connection.destroy()
+        for (let i = 0; i < result.length; i++) {
+
+            let fila = result[i];
+            data.push(Object.assign({}, getInstance(fila)))
+
+        }
+
+        if (data.length > 0) {
             res.json(data)
         } else {
-            Connection.destroy()
-            console.log(err)
-            res.status(500).json(data)
+            res.status(404).json()
         }
 
     })
+
+    // Connection.destroy()
+    Connection.end()
+
 }
 
 //Mostrar un registro
-export function findInstance (req, res) {
+export const findInstance = async (req, res) => {
 
     const { id } = req.params
-    const values = [id, 1]
+    const values = [id]
 
-    Connection = ConnectionStart()
+    Connection = ConnectionRestart()
 
-    Connection.query(SqlQuery + " WHERE ShoppingCartId = ? AND Status = ? ", values, (err, result) => {
-        Connection.end()
-        res.json(getInstanceShoppingCart(result[0]))
+    Connection.query(SqlQuery + " WHERE ShoppingCartId = ? ", values, (err, result) => {
+
+        if (result.length > 0) {
+            res.json(getInstance(result[0]))
+        } else {
+            res.status(404).json()
+        }
+
     })
+
+    Connection.end()
+
 }
 
 //delete un registro
-export function deleteInstance (req, res) {
+export const deleteInstance = (req, res) => {
 
     const { id } = req.params
-    const values = [2, id]
+    const values = [id]
 
-    Connection = ConnectionStart()
+    Connection = ConnectionRestart()
 
-    Connection.query("UPDATE shoppingcarts SET Status=? WHERE ShoppingCartId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.end()
-        res.json(success)
-    })
+    Connection.query("DELETE FROM shoppingarts WHERE ShoppingCartId = ? ", values,
+
+        (err, result) => {
+
+            res.json(!err && result.affectedRows > 0)
+
+        }
+
+    )
+
+    Connection.end()
 
 }

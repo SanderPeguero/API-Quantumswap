@@ -9,7 +9,7 @@ let SqlQuery = "SELECT CategoryId, SectionId, Description FROM categories "
 //** Métodos para el CRUD **/
 
 //save datos
-export function saveInstance (req, res) {
+export function saveInstance(req, res) {
 
     const CategoryModel = getInstanceCategory(req.body)
 
@@ -48,7 +48,7 @@ function insertInstance(categoryModel, res) {
             res.status(500).json(success)
         }
     })
-    
+
 }
 
 //Actualizar un registro
@@ -84,7 +84,7 @@ function updateInstance(categoryModel, res) {
 }
 
 //Mostrar todos los registros
-export function listInstances (req, res) {
+export function listInstances(req, res) {
 
     Connection = ConnectionStart()
 
@@ -109,13 +109,13 @@ export function listInstances (req, res) {
 }
 
 //Mostrar un registro
-export function findInstance (req, res) {
-    
+export function findInstance(req, res) {
+
     const { id } = req.params
     const values = [id]
-    
+
     Connection = ConnectionStart()
-    
+
     Connection.query(SqlQuery + " WHERE CategoryId = ? ", values, (err, result) => {
         Connection.destroy()
         res.json(getInstanceCategory(result[0]))
@@ -124,7 +124,7 @@ export function findInstance (req, res) {
 }
 
 //delete un registro
-export function deleteInstance (req, res) {
+export function deleteInstance(req, res) {
 
     const { id } = req.params
     const values = [id]

@@ -5,29 +5,41 @@ import { ConnectionStart } from "../DAL/Connection.js"
 
 let Connection = ConnectionStart()
 let SqlQuery = "SELECT " +
-"products.ProductId, " +
-"products.CategoryId, " +
-"sections.`SectionId`, " +
-"categories.`Description` AS CategoryDescription, " +
-"sections.`Description` AS SectionDescription, " +
-"products.Description, " +
-"products.Stock, " +
-"products.Cost, " +
-"products.Price, " +
-"products.Discount, " +
-"products.Image, " +
-"products.CreationDate, " +
-"products.ModificationDate, " +
-"products.Status " +
-"FROM products " +
-"LEFT JOIN categories ON categories.`CategoryId` = products.`CategoryId` " +
-"LEFT JOIN sections ON categories.`CategoryID` = products.`CategoryID` "
-let SqlQueryOffer = "SELECT OfferId, OfferTypeId, EntityId, Discount, StartDate, EndingDate, CreationDate, ModificationDate, Status FROM offers "
+    "products.ProductId, " +
+    "products.CategoryId, " +
+    "sections.`SectionId`, " +
+    "categories.`Description` AS CategoryDescription, " +
+    "sections.`Description` AS SectionDescription, " +
+    "products.Description, " +
+    "products.Stock, " +
+    "products.Cost, " +
+    "products.Price, " +
+    "products.Discount, " +
+    "products.Image, " +
+    "products.CreationDate, " +
+    "products.ModificationDate, " +
+    "products.Status " +
+    "FROM products " +
+    "LEFT JOIN categories ON categories.`CategoryId` = products.`CategoryId` " +
+    "LEFT JOIN sections ON categories.`CategoryID` = products.`CategoryID` "
+let SqlQueryOffer = "SELECT " +
+    "offers.OfferId, " +
+    "offers.OfferTypeId, " +
+    "offertypes.`Description` AS OfferTypeDescription, " +
+    "offers.EntityId, " +
+    "offers.Discount, " +
+    "offers.StartDate, " +
+    "offers.EndingDate, " +
+    "offers.CreationDate, " +
+    "offers.ModificationDate, " +
+    "offers.Status " +
+    "FROM offers " +
+    "LEFT JOIN offertypes ON offertypes.`OfferTypeId` = offers.`OfferTypeId`"
 
 //** Métodos para el CRUD **/
 
 //save datos
-export function saveInstance (req, res) {
+export function saveInstance(req, res) {
 
     const ProductModel = getInstanceProduct(req.body)
 
@@ -73,7 +85,7 @@ function insertInstance(productModel, res) {
             res.status(500).json(success)
         }
     })
-    
+
 }
 
 //Actualizar un registro
@@ -116,7 +128,7 @@ function updateInstance(productModel, res) {
 }
 
 //Mostrar todos los registros
-export function listInstances (req, res) {
+export function listInstances(req, res) {
 
     const values = [
         1
@@ -146,7 +158,7 @@ export function listInstances (req, res) {
 }
 
 //Mostrar un registro
-export function findInstance (req, res) {
+export function findInstance(req, res) {
 
     const { id } = req.params
     const values = [id, 1]
@@ -161,7 +173,7 @@ export function findInstance (req, res) {
 }
 
 //delete un registro
-export function deleteInstance (req, res) {
+export function deleteInstance(req, res) {
 
     const { id } = req.params
     const values = [2, id]

@@ -9,7 +9,7 @@ let SqlQuery = "SELECT StatusId, Description FROM statuses "
 //** Métodos para el CRUD **/
 
 //save datos
-export function saveInstance (req, res) {
+export function saveInstance(req, res) {
 
     const StatusModel = getInstanceStatus(req.body)
 
@@ -47,7 +47,7 @@ function insertInstance(statusModel, res) {
             res.status(500).json(success)
         }
     })
-    
+
 }
 
 //Actualizar un registro
@@ -82,7 +82,7 @@ function updateInstance(statusModel, res) {
 }
 
 //Mostrar todos los registros
-export function listInstances (req, res) {
+export function listInstances(req, res) {
 
     Connection = ConnectionStart()
 
@@ -107,7 +107,7 @@ export function listInstances (req, res) {
 }
 
 //Mostrar un registro
-export function findInstance (req, res) {
+export function findInstance(req, res) {
 
     const { id } = req.params
     const values = [id]
@@ -122,7 +122,7 @@ export function findInstance (req, res) {
 }
 
 //delete un registro
-export function deleteInstance (req, res) {
+export function deleteInstance(req, res) {
 
     const { id } = req.params
     const values = [id]
