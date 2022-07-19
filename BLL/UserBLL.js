@@ -41,18 +41,30 @@ export function insertInstance(userModel, res) {
     Connection = ConnectionStart()
 
     Connection.query(SqlQuery + " WHERE Email = ?", userModel.Email, (err, result) => {
-        if (result.length < 1) {
-            Connection = ConnectionStart()
-            Connection.query("INSERT INTO users (Name, LastName, Email, Password, SecretKey, CreationDate, Status) VALUES (?,?,?,PASSWORD(?),?,?,?)", values, (err, result) => {
-                success.ValidEmail = true
-                success.Executed = (!err && result.affectedRows > 0)
+        if (!err) {
+            if (result.length < 1) {
+                Connection = ConnectionStart()
+                Connection.query("INSERT INTO users (Name, LastName, Email, Password, SecretKey, CreationDate, Status) VALUES (?,?,?,PASSWORD(?),?,?,?)", values, (err, result) => {
+                    if (!err) {
+                        success.ValidEmail = true
+                        success.Executed = (result.affectedRows > 0)
+                        Connection.destroy()
+                        res.json(success)
+                    } else {
+                        Connection.destroy()
+                        console.log(err)
+                        res.status(500).json(success)
+                    }
+                })
+            } else {
+                success.ValidEmail = false
                 Connection.destroy()
                 res.json(success)
-            })
+            }
         } else {
-            success.ValidEmail = false
             Connection.destroy()
-            res.json(success)
+            console.log(err)
+            res.status(500).json(success)
         }
     })
 }
@@ -81,25 +93,43 @@ export function updateInstance(userModel, res) {
     Connection = ConnectionStart()
 
     Connection.query(SqlQuery + " WHERE UserId = ?", userModel.UserId, (err, result) => {
-        if (result.length > 0) {
-            if (result[0].Email == userModel.Email) {
-                Connection = ConnectionStart()
-                Connection.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=PASSWORD(?), SecretKey=?, ModificationDate=?, Status=? WHERE UserId = ? ", values, (err, result) => {
-                    success.ValidEmail = true
-                    success.Executed = (!err && result.affectedRows > 0)
-                    Connection.destroy()
-                    res.json(success)
-                })
-            } else {
-                Connection = ConnectionStart()
-                Connection.query(SqlQuery + " WHERE Email = ?", userModel.Email, (err, result) => {
-                    if (result.length > 0) {
-                        success.ValidEmail = false
-                    }
-                    Connection.destroy()
-                    res.json(success)
-                })
+        if (!err) {
+            if (result.length > 0) {
+                if (result[0].Email == userModel.Email) {
+                    Connection = ConnectionStart()
+                    Connection.query("UPDATE users SET Name=?, LastName=?, Email=?, Password=PASSWORD(?), SecretKey=?, ModificationDate=?, Status=? WHERE UserId = ? ", values, (err, result) => {
+                        if (!err) {
+                            success.ValidEmail = true
+                            success.Executed = (result.affectedRows > 0)
+                            Connection.destroy()
+                            res.json(success)
+                        } else {
+                            Connection.destroy()
+                            console.log(err)
+                            res.status(500).json(success)
+                        }
+                    })
+                } else {
+                    Connection = ConnectionStart()
+                    Connection.query(SqlQuery + " WHERE Email = ?", userModel.Email, (err, result) => {
+                        if (!err) {
+                            if (result.length > 0) {
+                                success.ValidEmail = false
+                            }
+                            Connection.destroy()
+                            res.json(success)
+                        } else {
+                            Connection.destroy()
+                            console.log(err)
+                            res.status(500).json(success)
+                        }
+                    })
+                }
             }
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(success)
         }
     })
 }
@@ -196,8 +226,9 @@ export function deleteInstance(req, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })

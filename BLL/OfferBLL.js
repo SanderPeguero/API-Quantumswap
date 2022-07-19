@@ -9,6 +9,7 @@ let SqlQuery = "SELECT " +
     "offers.OfferTypeId, " +
     "offertypes.`Description` AS OfferTypeDescription, " +
     "offers.EntityId, " +
+    "offers.Description, " +
     "offers.Discount, " +
     "offers.StartDate, " +
     "offers.EndingDate, " +
@@ -37,31 +38,33 @@ export function saveInstance(req, res) {
 function insertInstance(offerModel, res) {
 
     var date = new Date();
-
+    
     const values = [
         offerModel.OfferTypeId,
         offerModel.EntityId,
+        offerModel.Description,
         offerModel.Discount,
         offerModel.StartDate,
         offerModel.EndingDate,
         offerModel.CreationDate = date.toISOString().slice(0, 19).replace('T', ' '),
         offerModel.Status = 1
     ]
-
+    
     const success = {
         Executed: false
     }
 
     Connection = ConnectionStart()
 
-    Connection.query("INSERT INTO offers (OfferTypeId, EntityId, Discount, StartDate, EndingDate, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
+    Connection.query("INSERT INTO offers (OfferTypeId, EntityId, Description, Discount, StartDate, EndingDate, CreationDate, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", values, (err, result) => {
         if (!err) {
             success.Executed = true
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -76,6 +79,7 @@ function updateInstance(offerModel, res) {
     const values = [
         offerModel.OfferTypeId,
         offerModel.EntityId,
+        offerModel.Description,
         offerModel.Discount,
         offerModel.StartDate,
         offerModel.EndingDate,
@@ -90,14 +94,15 @@ function updateInstance(offerModel, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query("UPDATE offers SET OfferTypeId=?, EntityId=?, Discount=?, StartDate=?, EndingDate=?, ModificationDate=?, Status=? WHERE OfferId=?", values, (err, result) => {
+    Connection.query("UPDATE offers SET OfferTypeId=?, EntityId=?, Description=?, Discount=?, StartDate=?, EndingDate=?, ModificationDate=?, Status=? WHERE OfferId=?", values, (err, result) => {
         if (!err) {
             success.Executed = true
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -170,8 +175,9 @@ export function deleteInstance(req, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })

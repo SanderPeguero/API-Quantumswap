@@ -107,9 +107,9 @@ function insertInstance(shoppingCartModel, res) {
                                     Connection.destroy()
                                     if (err) {
                                         console.log(err)
-                                        res.json(success)
-                                    } else {
                                         res.status(500).json(success)
+                                    } else {
+                                        res.json(success)
                                     }
                                 } else {
                                     success.ShoppingCartInserted = true
@@ -138,9 +138,9 @@ function insertInstance(shoppingCartModel, res) {
                                                 Connection.destroy()
                                                 if (err) {
                                                     console.log(err)
-                                                    res.json(success)
-                                                } else {
                                                     res.status(500).json(success)
+                                                } else {
+                                                    res.json(success)
                                                 }
                                             }
                                         })
@@ -196,10 +196,10 @@ function updateInstance(shoppingCartModel, res) {
         } else {
             success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
-    }
-    )
+    })
 }
 
 //Mostrar todos los registros
@@ -249,12 +249,23 @@ export function deleteInstance(req, res) {
     const { id } = req.params
     const values = [2, id]
 
+    const success = {
+        Executed: false
+    }
+
     Connection = ConnectionStart()
 
     Connection.query("UPDATE shoppingcarts SET Status=? WHERE ShoppingCartId = ? ", values, (err, result) => {
-        success.Executed = (!err && result.affectedRows > 0)
-        Connection.end()
-        res.json(success)
+        if (!err) {
+            success.Executed = true
+            Connection.destroy()
+            res.json(success)
+        } else {
+            success.Executed = false
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(success)
+        }
     })
 
 }
