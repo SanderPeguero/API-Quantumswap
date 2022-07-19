@@ -2,6 +2,8 @@
 const ShoppingCartModel = {
     ShoppingCartId: 0,
     UserId: 0,
+    UserName: "",
+    TotalProducts: 0,
     Amount: 0,
     CreationDate: "",
     ModificationDate: "",
@@ -17,6 +19,8 @@ export function getInstanceShoppingCart(row = null) {
 
     ShoppingCartModel.ShoppingCartId = row.ShoppingCartId || 0,
         ShoppingCartModel.UserId = row.UserId || 0,
+        ShoppingCartModel.UserName = row.UserName || "",
+        ShoppingCartModel.TotalProducts = row.TotalProducts || 0,
         ShoppingCartModel.Amount = row.Amount || 0,
         ShoppingCartModel.CreationDate = row.CreationDate || "",
         ShoppingCartModel.ModificationDate = row.ModificationDate || "",

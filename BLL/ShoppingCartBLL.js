@@ -5,7 +5,18 @@ import { getInstanceProduct } from "../Models/ProductModel.js"
 import { ConnectionStart } from "../DAL/Connection.js"
 
 let Connection = ConnectionStart()
-let SqlQuery = "SELECT ShoppingCartId, UserId, Amount, CreationDate, ModificationDate, Status FROM shoppingcarts "
+let SqlQuery = "SELECT " +
+    "shoppingcarts.ShoppingCartId, " +
+    "shoppingcarts.UserId, " +
+    "CONCAT(CONCAT(users.`Name`, ' '), users.`LastName`) AS UserName, " +
+    "COUNT(shoppingcarts.`ShoppingCartId`) AS TotalProducts, " +
+    "shoppingcarts.Amount, " +
+    "shoppingcarts.CreationDate, " +
+    "shoppingcarts.ModificationDate, " +
+    "shoppingcarts.Status " +
+    "FROM shoppingcarts " +
+    "LEFT JOIN users ON users.`UserId` = shoppingcarts.`UserId` " +
+    "LEFT JOIN shoppingcartproducts ON shoppingcartproducts.`ShoppingCartId` = shoppingcarts.`ShoppingCartId` "
 let SqlQueryProducts = "SELECT " +
     "products.ProductId, " +
     "products.CategoryId, " +
@@ -24,6 +35,7 @@ let SqlQueryProducts = "SELECT " +
     "FROM products " +
     "LEFT JOIN categories ON categories.`CategoryId` = products.`CategoryId` " +
     "LEFT JOIN sections ON categories.`CategoryID` = products.`CategoryID` "
+
 //** Métodos para el CRUD **/
 
 //save datos
@@ -120,7 +132,7 @@ function insertInstance(shoppingCartModel, res) {
                                         values = [
                                             result.insertId,
                                             product.Quantity,
-                                            product.ProductId = 1
+                                            product.ProductId = shoppingCartModel.ShoppingCartProducts.ProductId
                                         ]
 
                                         Connection.query("insert into shoppingcartproducts (ShoppingCartId, ProductId, Quantity) values (?, ?, ?)", values, (err, result) => {
@@ -210,7 +222,7 @@ export function listInstances(req, res) {
     ]
 
     Connection = ConnectionStart()
-    Connection.query(SqlQuery + " WHERE Status = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE shoppingcarts.Status = ? GROUP BY shoppingcarts.`ShoppingCartId` ", values, (err, result) => {
         let data = []
 
         if (!err) {
@@ -237,7 +249,7 @@ export function findInstance(req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE ShoppingCartId = ? AND Status = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE ShoppingCartId = ? AND shoppingcarts.Status = ? GROUP BY shoppingcarts.`ShoppingCartId` ", values, (err, result) => {
         Connection.end()
         res.json(getInstanceShoppingCart(result[0]))
     })
