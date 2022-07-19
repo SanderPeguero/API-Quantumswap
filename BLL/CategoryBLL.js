@@ -108,6 +108,34 @@ export function listInstances(req, res) {
     })
 }
 
+//Mostrar todos los registros de una misma seccion
+export function listInstancesBySection(req, res) {
+
+    const { id } = req.params
+    const values = [id]
+
+    Connection = ConnectionStart()
+
+    Connection.query(SqlQuery + " WHERE SectionId=? ", values, (err, result) => {
+
+        let data = []
+
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceCategory(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
+        }
+
+    })
+}
+
 //Mostrar un registro
 export function findInstance(req, res) {
 

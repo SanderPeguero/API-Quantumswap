@@ -4,7 +4,7 @@ let ConnectionData = {
 	/*host: 'localhost',
 	user: 'root',
 	password: '',
-	database: 'quantumswapp'*/
+	database: 'heroku_292054ce91253dd'*/
 	host: 'us-cdbr-east-05.cleardb.net',
 	user: 'bfdc36de5e97cf',
 	password: '3554998b',
