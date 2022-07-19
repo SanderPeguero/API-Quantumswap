@@ -4,6 +4,7 @@ const OfferModel = {
     OfferTypeId: 0,
     OfferTypeDescription: "",
     EntityId: 0,
+    Description: "",
     Discount: 0,
     StartDate: "",
     EndingDate: "",
@@ -22,6 +23,7 @@ export function getInstanceOffer(row = null) {
     OfferModel.OfferTypeId = row.OfferTypeId || 0
     OfferModel.OfferTypeDescription = row.OfferTypeDescription || ""
     OfferModel.EntityId = row.EntityId || 0
+    OfferModel.Description = row.Description || ""
     OfferModel.Discount = row.Discount || 0
     OfferModel.StartDate = row.StartDate || ""
     OfferModel.EndingDate = row.EndingDate || ""

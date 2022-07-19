@@ -80,8 +80,9 @@ function insertInstance(productModel, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -118,8 +119,9 @@ function updateInstance(productModel, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -130,16 +132,41 @@ function updateInstance(productModel, res) {
 //Mostrar todos los registros
 export function listInstances(req, res) {
 
-    const values = [
-        1
-    ]
+    const values = [1]
 
     Connection = ConnectionStart()
 
     Connection.query(SqlQuery + " WHERE products.Status = ? ", values, (err, result) => {
 
         let data = []
-        let vav = [2, 1]
+
+        if (!err) {
+            for (let i = 0; i < result.length; i++) {
+                let fila = result[i];
+                data.push(Object.assign({}, getInstanceProduct(fila)))
+            }
+            Connection.destroy()
+            res.json(data)
+        } else {
+            Connection.destroy()
+            console.log(err)
+            res.status(500).json(data)
+        }
+
+    })
+}
+
+//Mostrar todos los registros por categoria
+export function listInstancesByCategory(req, res) {
+
+    const {id} = req.params
+    const values = [1, id]
+
+    Connection = ConnectionStart()
+
+    Connection.query(SqlQuery + " WHERE products.Status = ? AND products.CategoryId = ? ", values, (err, result) => {
+
+        let data = []
 
         if (!err) {
             for (let i = 0; i < result.length; i++) {
@@ -190,8 +217,9 @@ export function deleteInstance(req, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })

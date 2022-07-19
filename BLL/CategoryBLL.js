@@ -43,8 +43,9 @@ function insertInstance(categoryModel, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -74,8 +75,9 @@ function updateInstance(categoryModel, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
@@ -169,8 +171,9 @@ export function deleteInstance(req, res) {
             Connection.destroy()
             res.json(success)
         } else {
-            success.Executed = true
+            success.Executed = false
             Connection.destroy()
+            console.log(err)
             res.status(500).json(success)
         }
     })
