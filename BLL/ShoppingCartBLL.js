@@ -131,8 +131,8 @@ function insertInstance(shoppingCartModel, res) {
 
                                         values = [
                                             result.insertId,
-                                            product.Quantity,
-                                            product.ProductId = shoppingCartModel.ShoppingCartProducts.ProductId
+                                            product.ProductId,
+                                            product.Quantity
                                         ]
 
                                         Connection.query("insert into shoppingcartproducts (ShoppingCartId, ProductId, Quantity) values (?, ?, ?)", values, (err, result) => {

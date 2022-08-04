@@ -136,8 +136,10 @@ export function listInstances(req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE products.Status = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE products.Status = ? GROUP BY products.`ProductId` ", values, (err, result) => {
 
+        console.log(result)
+        console.log()
         let data = []
 
         if (!err) {
@@ -164,7 +166,7 @@ export function listInstancesByCategory(req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE products.Status = ? AND products.CategoryId = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE products.Status = ? AND products.CategoryId = ? GROUP BY products.`ProductId` ", values, (err, result) => {
 
         let data = []
 
@@ -192,7 +194,7 @@ export function findInstance(req, res) {
 
     Connection = ConnectionStart()
 
-    Connection.query(SqlQuery + " WHERE ProductId = ? AND Status = ? ", values, (err, result) => {
+    Connection.query(SqlQuery + " WHERE ProductId = ? AND Status = ? GROUP BY products.`ProductId` ", values, (err, result) => {
         Connection.destroy()
         res.json(getInstanceProduct(result[0]))
     })
