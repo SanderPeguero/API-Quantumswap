@@ -100,7 +100,7 @@ function insertInstance(shoppingCartModel, res) {
                             shoppingCartModel.Amount = 0
                             for (let i = 0; i < products.length; i++) {
                                 const product = products[i];
-                                shoppingCartModel.Amount += (product.Price - ((product.Discount / 100) * product.Price)) * shoppingCartModel.ShoppingCartProducts[i].Quantity;
+                                shoppingCartModel.Amount += (product.Price - ((product.Discount / 100) * product.Price)) * 1;//shoppingCartModel.ShoppingCartProducts[i].Quantity;
                             }
 
                             let values = [
